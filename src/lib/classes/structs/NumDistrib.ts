@@ -1,4 +1,4 @@
-import { MathHelper } from "$lib/helpers/MathHelper";
+import { MathHelper } from "$lib/classes/helpers/MathHelper";
 
 export class NumDistrib {
     public numSlots: number = 0;

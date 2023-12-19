@@ -1,4 +1,4 @@
-import { TileType } from "$lib/enums/TileType";
+import { TileType } from "$lib/classes/enums/TileType";
 import { Vector3, BoxGeometry, type Euler, Mesh, MeshLambertMaterial } from "three";
 
 export class Tile {
@@ -16,10 +16,10 @@ export class Tile {
     public geometry: BoxGeometry;
     public material: MeshLambertMaterial;
 
-    public constructor(position: Vector3, rotation: Euler, type: number) {
+    public constructor(position: Vector3, rotation: Euler, dimensions: Vector3, type: number) {
         this.position = position;
         this.rotation = rotation;
-        this.dimensions = new Vector3(Tile.LENGTH, Tile.HEIGHT, Tile.LENGTH);
+        this.dimensions = dimensions;
         this.type = type;
         this.color = TileType.getColor(this.type);
 
@@ -41,5 +41,9 @@ export class Tile {
         this.mesh.geometry.dispose();
 
         this.mesh = null;
+    }
+
+    public getNormal(face: number): Vector3 {
+        return new Vector3(0, 1, 0).applyEuler(this.rotation);
     }
 }
