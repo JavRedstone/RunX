@@ -1,81 +1,59 @@
 <script lang="ts">
-  import { T } from '@threlte/core'
-  import { ContactShadows, Float, Grid, OrbitControls } from '@threlte/extras'
+    import { Game } from '$lib/main/Game';
+    import { T, useThrelte, type ThrelteContext, useTask } from '@threlte/core';
+    import { BlendFunction, BloomEffect, EffectComposer, EffectPass, KernelSize, RenderPass } from 'postprocessing';
+    import { onMount } from 'svelte';
+    import type { Camera } from 'three';
+
+    const TC: ThrelteContext = useThrelte();
+    const { scene, renderer, camera, size, autoRender, renderStage } = TC;
+    const game: Game = new Game();
+
+    let effectComposer: EffectComposer;
+    setupEffectComposer();
+
+    function setupEffectComposer(): void {
+        effectComposer = new EffectComposer(renderer);
+        useTask(
+            (delta: number) => {
+                effectComposer.render(delta);
+            },
+            {
+                stage: this.TC.renderStage,
+                autoInvalidate: false
+            }
+        );
+    }
+
+    function updateBloomEffect(camera: Camera): void {
+        const bloomEffect: BloomEffect = new BloomEffect({
+            blendFunction: BlendFunction.SCREEN,
+            luminanceThreshold: 0,
+            luminanceSmoothing: 0.25,
+            intensity: 1,
+            kernelSize: KernelSize.HUGE,
+        });
+        let renderPass: RenderPass = new RenderPass(this.TC.scene, camera);
+        let effectPass: EffectPass = new EffectPass(camera, bloomEffect);
+        effectPass.renderToScreen = true;
+
+        effectComposer.removeAllPasses();
+        effectComposer.setSize(window.innerWidth, window.innerHeight);
+        effectComposer.addPass(renderPass);
+        effectComposer.addPass(effectPass);
+    }
+    
+    function updateRenderPass(camera: Camera): void {
+        updateBloomEffect(camera);
+    }
+
+    $: if (camera && scene) updateRenderPass($camera);
+
+    onMount(() => {
+        let before: boolean = autoRender.current;
+        autoRender.set(false);
+        return () => {
+            autoRender.set(before);
+        }
+    });
 </script>
-
-<T.PerspectiveCamera
-  makeDefault
-  position={[-10, 10, 10]}
-  fov={15}
->
-  <OrbitControls
-    autoRotate
-    enableZoom={false}
-    enableDamping
-    autoRotateSpeed={0.5}
-    target.y={1.5}
-  />
-</T.PerspectiveCamera>
-
-<T.DirectionalLight
-  intensity={0.8}
-  position.x={5}
-  position.y={10}
-/>
-<T.AmbientLight intensity={0.2} />
-
-<Grid
-  position.y={-0.001}
-  cellColor="#ffffff"
-  sectionColor="#ffffff"
-  sectionThickness={0}
-  fadeDistance={25}
-  cellSize={2}
-/>
-
-<ContactShadows
-  scale={10}
-  blur={2}
-  far={2.5}
-  opacity={0.5}
-/>
-
-<Float
-  floatIntensity={1}
-  floatingRange={[0, 1]}
->
-  <T.Mesh
-    position.y={1.2}
-    position.z={-0.75}
-  >
-    <T.BoxGeometry />
-    <T.MeshStandardMaterial color="#0059BA" />
-  </T.Mesh>
-</Float>
-
-<Float
-  floatIntensity={1}
-  floatingRange={[0, 1]}
->
-  <T.Mesh
-    position={[1.2, 1.5, 0.75]}
-    rotation.x={5}
-    rotation.y={71}
-  >
-    <T.TorusKnotGeometry args={[0.5, 0.15, 100, 12, 2, 3]} />
-    <T.MeshStandardMaterial color="#F85122" />
-  </T.Mesh>
-</Float>
-
-<Float
-  floatIntensity={1}
-  floatingRange={[0, 1]}
->
-  <T.Mesh
-    position={[-1.4, 1.5, 0.75]}
-    rotation={[-5, 128, 10]}
-  >
-    <T.IcosahedronGeometry />
-    <T.MeshStandardMaterial color="#F8EBCE" />
-  </T.Mesh>
-</Float>
