@@ -101,7 +101,11 @@ export class Game {
             this.player.currTile = closestTile;
             this.player.rotation.set(closestTile.rotation.x - Math.PI / 2, closestTile.rotation.y, closestTile.rotation.z);
         
+            // TODO: Fix this
             this.player.currTile.hasBeenTouched = true;
+            for (let tile of this.level.getConnectingTiles(this.player.currTile)) {
+                tile.hasBeenTouched = true;
+            }
         }
         else {
             this.player.currTile = null;

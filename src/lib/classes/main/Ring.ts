@@ -56,6 +56,22 @@ export class Ring {
         this.tiles = [];
     }
 
+    public getLeftTile(tile: Tile): Tile {
+        let index: number = this.tiles.indexOf(tile);
+        if (index == 0) {
+            return this.tiles[this.tiles.length - 1];
+        }
+        return this.tiles[index - 1];
+    }
+
+    public getRightTile(tile: Tile): Tile {
+        let index: number = this.tiles.indexOf(tile);
+        if (index == this.tiles.length - 1) {
+            return this.tiles[0];
+        }
+        return this.tiles[index + 1];
+    }
+
     public destroy(): void {
         this.tiles.forEach(tile => tile.destroy());
     }

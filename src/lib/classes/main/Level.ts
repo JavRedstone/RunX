@@ -1,6 +1,7 @@
 import type { Scene } from "three";
 import { MathHelper } from "../helpers/MathHelper";
 import { Ring } from "./Ring";
+import type { Tile } from "./Tile";
 
 export class Level {
     public static readonly STARTING_LENGTH: number = 5;
@@ -24,6 +25,41 @@ export class Level {
         this.num = num;
         
         this.sides = MathHelper.randIntRange(Level.MIN_SIDES, Level.MAX_SIDES);
+    }
+
+    public getConnectingTiles(tile: Tile): Tile[] {
+        let connectingTiles = [];
+        for (let ring of this.rings) {
+            let index: number = ring.tiles.indexOf(tile);
+            if (index != -1) {
+                let leftTile: Tile = ring.getLeftTile(tile);
+                if (leftTile) {
+                    connectingTiles.push(leftTile);
+                }
+                let rightTile: Tile = ring.getRightTile(tile);
+                if (rightTile) {
+                    connectingTiles.push(rightTile);
+                }
+                let leftRing: Ring = this.getLeftRing(ring);
+                if (leftRing != null) {
+                    connectingTiles.push(leftRing.tiles[index]);
+                }
+                connectingTiles.push(this.getRightRing(ring).tiles[index]);
+                console.log(connectingTiles)
+            }
+        }
+        return connectingTiles;
+    }
+
+    public getLeftRing(ring: Ring): Ring {
+        if (ring.num == 0) {
+            return null;
+        }
+        return this.rings[ring.num - 1];
+    }
+
+    public getRightRing(ring: Ring): Ring {
+        return this.rings[ring.num + 1];
     }
 
     public destroy(): void {
