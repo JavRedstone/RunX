@@ -1,4 +1,4 @@
-import { Vector3, Euler, Scene, BoxGeometry, Mesh, MeshLambertMaterial, SphereGeometry } from "three";
+import { Vector3, Euler, Scene, Mesh, MeshLambertMaterial, SphereGeometry } from "three";
 import { Game } from "./Game";
 import { Color } from "../enums/Color";
 import { Tile } from "./Tile";
@@ -12,6 +12,8 @@ export class Player {
     public static readonly RUNNING_SPEED: number = 0.15;
     public static readonly JUMPING_SPEED: number = 0.125;
     public static readonly STRAFING_SPEED: number = 0.05;
+    
+    public static readonly DEATH_RADIUS_MULTIPLIER: number = 5;
     
     public position: Vector3;
     public velocity: Vector3;
@@ -109,6 +111,7 @@ export class Player {
             this.justJumped = false;
             this.isInAir = true;
         }
+
         this.velocity.add(this.acceleration);
         let rotatedVelocity: Vector3 = this.velocity.clone().applyEuler(this.rotation);
         this.position.add(rotatedVelocity);

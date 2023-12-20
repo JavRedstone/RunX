@@ -4,6 +4,7 @@ import { Player } from "./Player";
 import { TileType } from "../enums/TileType";
 import { Pair } from "../structs/Pair";
 import { Tile } from "./Tile";
+import { Ring } from "./Ring";
 
 export class Game {
     public static readonly GRAVITY: number = 0.005;
@@ -48,8 +49,25 @@ export class Game {
     }
 
     public updatePlayer(): void {
+        this.handlePlayerBounds();
         this.handlePlayerCollision();
         this.player.update();
+    }
+
+    public handlePlayerBounds(): void {
+        if (this.player.position.distanceTo(new Vector3(this.player.position.x, 0, 0)) > Ring.RADIUS * Player.DEATH_RADIUS_MULTIPLIER) {
+            this.level.reset();
+
+            this.player.position = new Vector3(0, 0, 0);
+            this.player.velocity = new Vector3(0, 0, 0);
+            this.player.acceleration = new Vector3(0, 0, 0);
+            this.player.rotation = new Euler(0, 0, 0);
+
+            this.cameraTargetPosition = new Vector3(0, 0, 0);
+            this.cameraTargetRotation = new Euler(0, 0, 0);
+            this.camera.position.copy(this.cameraTargetPosition);
+            this.scene.rotation.copy(new Euler(0, 0, 0));
+        }
     }
 
     public handlePlayerCollision(): void {
@@ -98,7 +116,7 @@ export class Game {
         for (let i = 0; i < numAfter; i++) {
             this.level.createNext();
         }
-        if (this.player.position.x- Game.RENDER_START * Tile.LENGTH > this.level.rings[0].tiles[0].position.x) {
+        if (this.player.position.x - Game.RENDER_START * Tile.LENGTH > this.level.rings[0].tiles[0].position.x) {
             this.level.destroyLast();
         }
     }

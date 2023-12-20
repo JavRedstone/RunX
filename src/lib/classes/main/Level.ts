@@ -30,6 +30,11 @@ export class Level {
         this.rings = [];
     }
 
+    public reset() {
+        this.destroy();
+        this.numRingsCreated = 0;
+    }
+
     public createNext(): void {
         if (this.numRingsCreated < Level.STARTING_LENGTH + Level.MIDDLE_LENGTH + Level.ENDING_LENGTH) {
             this.rings.push(new Ring(this.scene, this.numRingsCreated, this.num, this.sides));
