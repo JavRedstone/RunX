@@ -1,9 +1,10 @@
 import { TileDistrib } from "$lib/classes/enums/TileDistrib";
 import { MathHelper } from "$lib/classes/helpers/MathHelper";
 import type { NumDistrib } from "$lib/classes/structs/NumDistrib";
-import { Euler, Vector3 } from "three";
+import { Euler, Scene, Vector3 } from "three";
 import { TileType } from "../enums/TileType";
 import { Tile } from "./Tile";
+import { Level } from "./Level";
 
 export class Ring {
     public static readonly RADIUS: number = 2;
@@ -14,7 +15,11 @@ export class Ring {
     public level: number;
     public sides: number;
 
-    public constructor(num: number, level: number, sides: number) {
+    public scene: Scene;
+
+    public constructor(scene: Scene, num: number, level: number, sides: number) {
+        this.scene = scene;
+
         this.num = num;
         this.level = level;
         this.sides = sides;
@@ -29,21 +34,17 @@ export class Ring {
         let width: number = 2 * Ring.RADIUS * Math.tan(Math.PI / this.sides) - Tile.HEIGHT * Math.tan(Math.PI / this.sides);
         for (let i = 0; i < this.sides; i++) {
             let angle: number = (i / this.sides) * Math.PI * 2;
-            let tileType: number;
-            switch(this.level) {
-                case TileType.STARTING:
-                    tileType = TileType.STARTING;
-                    break;
-                case TileType.ENDING:
-                    tileType = TileType.ENDING;
-                    break;
-                default:
-                    tileType = tileDistrib.slots[i];
-                    break;
+            let tileType: number = tileDistrib.slots[i];
+            if (this.num > -1 && this.num < Level.STARTING_LENGTH) {
+                tileType = TileType.STARTING;
             }
-            this.tiles.push(new Tile(  
-                new Vector3(0, Math.cos(angle) * Ring.RADIUS, Math.sin(angle) * Ring.RADIUS),
-                new Euler(angle, 0, 0),
+            else if (this.num >= Level.STARTING_LENGTH + Level.MIDDLE_LENGTH && this.num <= Level.STARTING_LENGTH + Level.MIDDLE_LENGTH + Level.ENDING_LENGTH) {
+                tileType = TileType.ENDING;
+            }
+            this.tiles.push(new Tile(
+                this.scene,
+                new Vector3(Tile.LENGTH * this.num, Math.cos(angle + Math.PI) * Ring.RADIUS, Math.sin(angle + Math.PI) * Ring.RADIUS),
+                new Euler(angle + Math.PI / 2, 0, 0),
                 new Vector3(Tile.LENGTH, width, Tile.HEIGHT),
                 tileType
             ));
@@ -53,5 +54,11 @@ export class Ring {
     public destroy(): void {
         this.tiles.forEach(tile => tile.destroy());
         this.tiles = [];
+    }
+
+    public updateRender(): void {
+        this.tiles.forEach(tile => {
+            tile.updateRender();
+        });
     }
 }
