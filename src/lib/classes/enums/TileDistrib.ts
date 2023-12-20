@@ -9,7 +9,7 @@ export class TileDistrib {
 
     public static readonly PREFERENCE_1_10: number[] = [5, 10];
     public static readonly PREFERENCE_11_30: number[] = [5, 10, 10];
-    public static readonly PREFERENCE_31_60: number[] = [10, 20, 10, 5];
+    public static readonly PREFERENCE_31_60: number[] = [10, 10, 10, 5];
     public static readonly PREFERENCE_61_100: number[] = [30, 20, 15, 5, 1];
 
     public static getTileDistrib(num: number, sides: number): NumDistrib {

@@ -51,9 +51,19 @@ export class Ring {
         }
     }
 
-    public destroy(): void {
+    public completelyDestroy(): void {
         this.tiles.forEach(tile => tile.destroy());
         this.tiles = [];
+    }
+
+    public destroy(): void {
+        this.tiles.forEach(tile => tile.destroy());
+    }
+
+    public rerender(): void {
+        this.tiles.forEach(tile => {
+            tile.create();
+        });
     }
 
     public updateRender(): void {

@@ -4,17 +4,18 @@ import { Ring } from "./Ring";
 
 export class Level {
     public static readonly STARTING_LENGTH: number = 5;
-    public static readonly ENDING_LENGTH: number = 5;
-    public static readonly MIDDLE_LENGTH: number = 50;
+    public static readonly ENDING_LENGTH: number = 100;
+    public static readonly MIDDLE_LENGTH: number = 20;
 
     public static readonly MIN_SIDES: number = 4;
-    public static readonly MAX_SIDES: number = 12;
+    public static readonly MAX_SIDES: number = 8;
 
     public num: number;
     public sides: number;
 
     public numRingsCreated: number = 0;
     public rings: Ring[] = [];
+    public generatedRings: Ring[] = [];
 
     public scene: Scene;
 
@@ -37,7 +38,16 @@ export class Level {
 
     public createNext(): void {
         if (this.numRingsCreated < Level.STARTING_LENGTH + Level.MIDDLE_LENGTH + Level.ENDING_LENGTH) {
-            this.rings.push(new Ring(this.scene, this.numRingsCreated, this.num, this.sides));
+            if (this.generatedRings.length > this.numRingsCreated) {
+                let generatedRing: Ring = this.generatedRings[this.numRingsCreated];
+                generatedRing.rerender();
+                this.rings.push(generatedRing);
+            }
+            else {
+                let ring: Ring = new Ring(this.scene, this.numRingsCreated, this.num, this.sides);
+                this.rings.push(ring);
+                this.generatedRings.push(ring);
+            }
             this.numRingsCreated++;
         }
     }

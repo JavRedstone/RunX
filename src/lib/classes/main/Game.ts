@@ -12,6 +12,8 @@ export class Game {
     public static readonly RENDER_START: number = 3;
     public static readonly RENDER_END: number = 15;
 
+    public static readonly MAX_FALL_MULTIPLIER = 3;
+
     public level: Level;
     public player: Player;
 
@@ -23,7 +25,7 @@ export class Game {
 
     public constructor(scene: Scene) {
         this.scene = scene;
-        this.level = new Level(scene, 1);
+        this.level = new Level(scene, 35);
         this.player = new Player(scene);
 
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -55,7 +57,10 @@ export class Game {
     }
 
     public handlePlayerBounds(): void {
-        if (this.player.position.distanceTo(new Vector3(this.player.position.x, 0, 0)) > Ring.RADIUS * Player.DEATH_RADIUS_MULTIPLIER) {
+        if (this.player.position.distanceTo(new Vector3(this.player.position.x, 0, 0)) > Ring.RADIUS * Game.MAX_FALL_MULTIPLIER ||
+            (this.player.currTile != null && this.player.currTile.type == TileType.ENDING) ||
+            this.player.pressedReset
+        ) {
             this.level.reset();
 
             this.player.position = new Vector3(0, 0, 0);
@@ -63,10 +68,17 @@ export class Game {
             this.player.acceleration = new Vector3(0, 0, 0);
             this.player.rotation = new Euler(0, 0, 0);
 
+            this.player.justJumped = false;
+            this.player.isInAir = true;
+
             this.cameraTargetPosition = new Vector3(0, 0, 0);
             this.cameraTargetRotation = new Euler(0, 0, 0);
             this.camera.position.copy(this.cameraTargetPosition);
             this.scene.rotation.copy(new Euler(0, 0, 0));
+        }
+        if (this.player.currTile != null && this.player.currTile.type == TileType.ENDING) {
+            this.level.destroy();
+            this.level = new Level(this.scene, this.level.num + 1);
         }
     }
 
@@ -88,6 +100,8 @@ export class Game {
             let closestTile: Tile = tileDists[0].first;
             this.player.currTile = closestTile;
             this.player.rotation.set(closestTile.rotation.x - Math.PI / 2, closestTile.rotation.y, closestTile.rotation.z);
+        
+            this.player.currTile.hasBeenTouched = true;
         }
         else {
             this.player.currTile = null;

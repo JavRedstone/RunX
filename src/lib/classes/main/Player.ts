@@ -3,6 +3,7 @@ import { Game } from "./Game";
 import { Color } from "../enums/Color";
 import { Tile } from "./Tile";
 import { Ring } from "./Ring";
+import { TileType } from "../enums/TileType";
 
 export class Player {
     public static readonly COLOR: string = Color.CYAN;
@@ -13,8 +14,6 @@ export class Player {
     public static readonly JUMPING_SPEED: number = 0.125;
     public static readonly STRAFING_SPEED: number = 0.05;
     
-    public static readonly DEATH_RADIUS_MULTIPLIER: number = 5;
-    
     public position: Vector3;
     public velocity: Vector3;
     public acceleration: Vector3;
@@ -24,6 +23,7 @@ export class Player {
     public pressedRun: boolean = false;
     public pressedStrafeLeft: boolean = false;
     public pressedStrafeRight: boolean = false;
+    public pressedReset: boolean = false;
 
     public justJumped: boolean = false;
     public isInAir: boolean = true;
@@ -70,6 +70,7 @@ export class Player {
 
     public update(): void {
         this.move();
+        this.updTileEffects();
         this.updIntrinsic();
         this.updateRender();
     }
@@ -93,6 +94,19 @@ export class Player {
         }
         else if (this.pressedStrafeRight) {
             this.velocity.z = Player.STRAFING_SPEED;
+        }
+    }
+
+    public updTileEffects(): void {
+        if (this.currTile != null) {
+            switch(this.currTile.type) {
+                case TileType.JUMPING:
+                    this.justJumped = true;
+                    this.isInAir = true;
+                    this.velocity.y = 0;
+                    this.velocity.y += Tile.JUMPING_BOOST_SPEED;
+                    break;
+            }
         }
     }
 

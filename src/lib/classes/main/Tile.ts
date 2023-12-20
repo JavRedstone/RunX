@@ -1,16 +1,25 @@
 import { TileType } from "$lib/classes/enums/TileType";
-import { Vector3, BoxGeometry, type Euler, Mesh, MeshLambertMaterial, Scene } from "three";
+import { Vector3, BoxGeometry, Euler, Mesh, MeshLambertMaterial, Scene } from "three";
+import { Ring } from "./Ring";
+import { Game } from "./Game";
 
 export class Tile {
     public static readonly LENGTH: number = 2;
     public static readonly HEIGHT: number = 0.1;
 
+    public static readonly JUMPING_BOOST_SPEED: number = 0.225;
+
     public position: Vector3;
+    public originalPosition: Vector3;
+    public velocity: Vector3;
+    public acceleration: Vector3;
     public rotation: Euler;
     public dimensions: Vector3;
     
     public type: number;
     public color: string;
+
+    public hasBeenTouched: boolean = false;
 
     public mesh: Mesh;
     public geometry: BoxGeometry;
@@ -22,6 +31,9 @@ export class Tile {
         this.scene = scene;
 
         this.position = position;
+        this.originalPosition = position.clone();
+        this.velocity = new Vector3(0, 0, 0);
+        this.acceleration = new Vector3(0, 0, 0);
         this.rotation = rotation;
         this.dimensions = dimensions;
         this.type = type;
@@ -42,6 +54,13 @@ export class Tile {
         this.scene.add(this.mesh);
     }
 
+    public reset(): void {
+        this.hasBeenTouched = false;
+        this.position = this.originalPosition.clone();
+        this.velocity = new Vector3(0, 0, 0);
+        this.acceleration = new Vector3(0, 0, 0);
+    }
+
     public destroy(): void {
         this.scene.remove(this.mesh);
 
@@ -51,6 +70,8 @@ export class Tile {
         this.mesh.geometry.dispose();
 
         this.mesh = null;
+        
+        this.reset();
     }
 
     public equals(other: Tile): boolean {
@@ -62,6 +83,7 @@ export class Tile {
     }
 
     public updateRender(): void {
+        this.tick();
         this.mesh.position.set(this.position.x, this.position.y, this.position.z);
         this.mesh.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
 
@@ -78,5 +100,25 @@ export class Tile {
         const dy = Math.max(Math.abs(localPoint.y) - halfDimensions.y, 0);
         const dz = Math.max(Math.abs(localPoint.z) - halfDimensions.z, 0);
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+    public tick(): void {
+        if (this.hasBeenTouched) {
+            switch(this.type) {
+                case TileType.FALLING:
+                    this.acceleration.y = -Game.GRAVITY / 2;
+                    break;
+            }
+        }
+
+        this.updIntrinsic();
+    }
+
+    public updIntrinsic(): void {
+        this.velocity.add(this.acceleration);
+        let rotatedVelocity: Vector3 = this.velocity.clone().applyEuler(
+            new Euler(this.rotation.x - Math.PI / 2, this.rotation.y, this.rotation.z)
+        );
+        this.position.add(rotatedVelocity);
     }
 }

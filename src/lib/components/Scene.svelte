@@ -71,6 +71,8 @@
                 game.player.pressedStrafeLeft = true;
             } else if (e.key == 'd' || e.key == 'D' || e.key == 'ArrowRight') {
                 game.player.pressedStrafeRight = true;
+            } else if (e.key == 'r' || e.key == 'R') {
+                game.player.pressedReset = true;
             }
         });
         document.addEventListener('keyup', (e) => {
@@ -82,6 +84,8 @@
                 game.player.pressedStrafeLeft = false;
             } else if (e.key == 'd' || e.key == 'D' || e.key == 'ArrowRight') {
                 game.player.pressedStrafeRight = false;
+            } else if (e.key == 'r' || e.key == 'R') {
+                game.player.pressedReset = false;
             }
         });
     }
