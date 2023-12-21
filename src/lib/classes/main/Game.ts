@@ -85,7 +85,7 @@ export class Game {
         let tileDists: Pair[] = [];
         this.level.rings.forEach(ring => {
             ring.tiles.forEach(tile => {
-                if (tile.type != TileType.EMPTY && (this.player.currTile == null || !this.player.currTile.equals(tile))) {
+                if (!tile.destroyed && tile.type != TileType.EMPTY && (this.player.currTile == null || !this.player.currTile.equals(tile))) {
                     let distance: number = tile.distSurfaceTo(this.player.position);
                     if (distance < Player.RADIUS) {
                         tileDists.push(new Pair(tile, distance));

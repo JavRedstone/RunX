@@ -67,6 +67,7 @@ export class Tile {
 
     public reset(): void {
         this.hasBeenTouched = false;
+        this.touchOriginType = null;
         this.position = this.originalPosition.clone();
         this.velocity = new Vector3(0, 0, 0);
         this.acceleration = new Vector3(0, 0, 0);
