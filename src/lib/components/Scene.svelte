@@ -12,6 +12,8 @@
     const { scene, renderer, camera, size, autoRender, renderStage } = TC;
     
     const game: Game = new Game(scene);
+    game.start();
+    setMovement();
 
     let effectComposer: EffectComposer = new EffectComposer(renderer);
     const fog: Fog = new Fog(Color.BLACK, Tile.LENGTH * 10, Tile.LENGTH * 15);
@@ -38,7 +40,7 @@
             blendFunction: BlendFunction.SCREEN,
             luminanceThreshold: 0,
             luminanceSmoothing: 0.25,
-            intensity: 1,
+            intensity: 0.75,
             kernelSize: KernelSize.HUGE,
         });
         let renderPass: RenderPass = new RenderPass(scene, camera);
@@ -93,8 +95,6 @@
     $: if (camera && scene) updateRenderPass($camera, $size);
 
     onMount(() => {
-        setMovement();
-
         let before: boolean = autoRender.current;
         autoRender.set(false);
         return () => {

@@ -32,8 +32,11 @@ export class Game {
 
     public constructor(scene: Scene) {
         this.scene = scene;
-        this.level = new Level(scene, 91);
-        this.player = new Player(scene);
+    }
+
+    public start(): void {
+        this.level = new Level(this.scene, 91);
+        this.player = new Player(this.scene);
 
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
