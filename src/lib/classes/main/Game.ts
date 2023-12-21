@@ -7,6 +7,8 @@ import { Tile } from "./Tile";
 import { Ring } from "./Ring";
 
 export class Game {
+    public static readonly TPS: number = 60;
+
     public static readonly GRAVITY: number = 0.005;
 
     public static readonly RENDER_START: number = 3;
@@ -26,6 +28,8 @@ export class Game {
 
     public tileActionIntervals: number[] = [];
 
+    public globalTicker: number = 0;
+
     public constructor(scene: Scene) {
         this.scene = scene;
         this.level = new Level(scene, 62);
@@ -33,7 +37,7 @@ export class Game {
 
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-        this.tick();
+        this.startTicker();
     }
 
     public destroy(): void {
@@ -41,9 +45,10 @@ export class Game {
         this.player.destroy();
     }
     
-    public tick(): void {
-        this.update();
-        requestAnimationFrame(() => this.tick());
+    public startTicker(): void {
+        this.globalTicker = setInterval(() => {
+            this.update();
+        }, 1000 / Game.TPS);
     }
 
     public update(): void {
