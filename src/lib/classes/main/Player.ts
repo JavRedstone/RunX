@@ -30,6 +30,7 @@ export class Player {
 
     public justJumped: boolean = false;
     public isInAir: boolean = true;
+    public underBoost: boolean = false;
 
     public currTile: Tile;
 
@@ -69,6 +70,7 @@ export class Player {
 
         this.justJumped = false;
         this.isInAir = true;
+        this.underBoost = false;
     }
 
     public destroy(): void {
@@ -108,6 +110,9 @@ export class Player {
         } else {
             this.velocity.x = Player.WALKING_SPEED;
         }
+        if (this.underBoost) {
+            this.velocity.x += Tile.FORWARD_BOOST_SPEED;
+        }
         if ((this.pressedStrafeLeft && this.pressedStrafeRight) || (!this.pressedStrafeLeft && !this.pressedStrafeRight)) {
             this.velocity.z = 0;
         }
@@ -127,6 +132,12 @@ export class Player {
                     this.isInAir = true;
                     this.velocity.y = 0;
                     this.velocity.y += Tile.JUMPING_BOOST_SPEED;
+                    break;
+                case TileType.FORWARD:
+                    this.underBoost = true;
+                    break;
+                case TileType.BACKWARD:
+                    this.underBoost = false;
                     break;
             }
         }

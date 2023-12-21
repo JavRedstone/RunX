@@ -63,7 +63,7 @@
 
     function setMovement(): void {
         document.addEventListener('keydown', (e) => {
-            if (e.key == 'w' || e.key == 'W' || e.key == 'ArrowUp') {
+            if (e.key == 'w' || e.key == 'W' || e.key == 'ArrowUp' || e.key == ' ') {
                 game.player.pressedJump = true;
             } else if (e.key == 'Shift') {
                 game.player.pressedRun = true;

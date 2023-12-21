@@ -15,7 +15,7 @@ export class Game {
     public static readonly RENDER_END: number = 12;
 
     public static readonly TILE_FALL_INTERVAL: number = 50;
-    public static readonly TILE_BOMB_INTERVAL: number = 100;
+    public static readonly TILE_BOMB_INTERVAL: number = 25;
 
     public level: Level;
     public player: Player;
@@ -32,7 +32,7 @@ export class Game {
 
     public constructor(scene: Scene) {
         this.scene = scene;
-        this.level = new Level(scene, 62);
+        this.level = new Level(scene, 91);
         this.player = new Player(scene);
 
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
