@@ -9,15 +9,18 @@ export class Player {
     public static readonly COLOR: string = Color.CYAN;
 
     public static readonly RADIUS: number = 0.1;
-    public static readonly WALKING_SPEED: number = 0.075;
+    public static readonly WALKING_SPEED: number = 0.08;
     public static readonly RUNNING_SPEED: number = 0.15;
     public static readonly JUMPING_SPEED: number = 0.125;
     public static readonly STRAFING_SPEED: number = 0.05;
+
+    public static readonly MAX_FALL_MULTIPLIER: number = 2;
     
     public position: Vector3;
     public velocity: Vector3;
     public acceleration: Vector3;
     public rotation: Euler;
+    public scale: Vector3;
 
     public pressedJump: boolean = false;
     public pressedRun: boolean = false;
@@ -30,6 +33,8 @@ export class Player {
 
     public currTile: Tile;
 
+    public destroyed: boolean = false;
+
     public mesh: Mesh;
     public geometry: SphereGeometry;
     public material: MeshLambertMaterial;
@@ -39,15 +44,13 @@ export class Player {
     public constructor(scene: Scene) {
         this.scene = scene;
         
-        this.position = new Vector3(0, 0, 0);
-        this.velocity = new Vector3(0, 0, 0);
-        this.acceleration = new Vector3(0, 0, 0);
-        this.rotation = new Euler(0, 0, 0);
-
+        this.reset();
         this.create();
     }
 
     public create(): void {
+        this.destroyed = false;
+
         this.geometry = new SphereGeometry(Player.RADIUS);
         this.material = new MeshLambertMaterial({ color: Player.COLOR, emissive: Player.COLOR });
         this.mesh = new Mesh(this.geometry, this.material);
@@ -57,15 +60,34 @@ export class Player {
         this.scene.add(this.mesh);
     }
 
+    public reset(): void {
+        this.position = new Vector3(0, -Ring.RADIUS + Tile.HEIGHT / 2 + Player.RADIUS, 0);
+        this.velocity = new Vector3(0, 0, 0);
+        this.acceleration = new Vector3(0, 0, 0);
+        this.rotation = new Euler(0, 0, 0);
+        this.scale = new Vector3(1, 1, 1);
+
+        this.justJumped = false;
+        this.isInAir = true;
+    }
+
     public destroy(): void {
-        this.scene.remove(this.mesh);
-
-        this.geometry.dispose();
-        this.material.dispose();
-
-        this.mesh.geometry.dispose();
-
+        if (this.mesh) {
+            this.scene.remove(this.mesh);
+            this.mesh.geometry.dispose();
+        }
+        if (this.geometry) {
+            this.geometry.dispose();
+        }
+        if (this.material) {
+            this.material.dispose();
+        }
+        
         this.mesh = null;
+        this.geometry = null;
+        this.material = null;
+
+        this.destroyed = true;
     }
 
     public update(): void {
@@ -111,10 +133,10 @@ export class Player {
     }
 
     public updIntrinsic(): void {
-        if (this.currTile != null && !this.justJumped) {
+        if (this.currTile != null && !this.currTile.destroyed && !this.justJumped) {
             let rotatedPosition: Vector3 = this.position.clone().applyAxisAngle(new Vector3(1, 0, 0), -this.currTile.rotation.x + Math.PI / 2);
             if (rotatedPosition.y < Tile.HEIGHT / 2 + Player.RADIUS - Ring.RADIUS) {
-                this.position = rotatedPosition.setY(Tile.HEIGHT / 2 + Player.RADIUS - Ring.RADIUS).applyAxisAngle(new Vector3(1, 0, 0), this.currTile.rotation.x - Math.PI / 2)
+                this.position = rotatedPosition.setY(this.currTile.position.clone().applyAxisAngle(new Vector3(1, 0, 0), -this.currTile.rotation.x + Math.PI / 2).y + Tile.HEIGHT / 2 + Player.RADIUS).applyAxisAngle(new Vector3(1, 0, 0), this.currTile.rotation.x - Math.PI / 2)
             }
             this.acceleration.y = 0;
             this.velocity.y = 0;
@@ -132,10 +154,16 @@ export class Player {
     }
 
     public updateRender(): void {
-        this.mesh.position.set(this.position.x, this.position.y, this.position.z);
-        this.mesh.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
-
-        this.material.color.set(Player.COLOR);
-        this.material.emissive.set(Player.COLOR);
+        if (this.mesh) {
+            this.mesh.position.set(this.position.x, this.position.y, this.position.z);
+            this.mesh.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
+        }
+        if (this.material) {
+            this.material.color.set(Player.COLOR);
+            this.material.emissive.set(Player.COLOR);
+        }
+        if (this.geometry) {
+            this.mesh.geometry.scale(this.scale.x, this.scale.y, this.scale.z);
+        }
     }
 }

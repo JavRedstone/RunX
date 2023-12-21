@@ -12,7 +12,8 @@ export class Game {
     public static readonly RENDER_START: number = 3;
     public static readonly RENDER_END: number = 15;
 
-    public static readonly MAX_FALL_MULTIPLIER = 3;
+    public static readonly TILE_FALL_INTERVAL: number = 50;
+    public static readonly TILE_BOMB_INTERVAL: number = 100;
 
     public level: Level;
     public player: Player;
@@ -23,9 +24,11 @@ export class Game {
     public cameraTargetPosition: Vector3;
     public cameraTargetRotation: Euler;
 
+    public tileActionIntervals: number[] = [];
+
     public constructor(scene: Scene) {
         this.scene = scene;
-        this.level = new Level(scene, 35);
+        this.level = new Level(scene, 62);
         this.player = new Player(scene);
 
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -57,19 +60,15 @@ export class Game {
     }
 
     public handlePlayerBounds(): void {
-        if (this.player.position.distanceTo(new Vector3(this.player.position.x, 0, 0)) > Ring.RADIUS * Game.MAX_FALL_MULTIPLIER ||
+        if (this.player.position.distanceTo(new Vector3(this.player.position.x, 0, 0)) > Ring.RADIUS * Player.MAX_FALL_MULTIPLIER ||
             (this.player.currTile != null && this.player.currTile.type == TileType.ENDING) ||
             this.player.pressedReset
         ) {
             this.level.reset();
+            this.tileActionIntervals.forEach(interval => clearInterval(interval));
+            this.tileActionIntervals = [];
 
-            this.player.position = new Vector3(0, 0, 0);
-            this.player.velocity = new Vector3(0, 0, 0);
-            this.player.acceleration = new Vector3(0, 0, 0);
-            this.player.rotation = new Euler(0, 0, 0);
-
-            this.player.justJumped = false;
-            this.player.isInAir = true;
+            this.player.reset();
 
             this.cameraTargetPosition = new Vector3(0, 0, 0);
             this.cameraTargetRotation = new Euler(0, 0, 0);
@@ -101,15 +100,57 @@ export class Game {
             this.player.currTile = closestTile;
             this.player.rotation.set(closestTile.rotation.x - Math.PI / 2, closestTile.rotation.y, closestTile.rotation.z);
         
-            // TODO: Fix this
-            this.player.currTile.hasBeenTouched = true;
-            for (let tile of this.level.getConnectingTiles(this.player.currTile)) {
-                tile.hasBeenTouched = true;
+            if (this.player.currTile.type == TileType.FALLING) {
+                this.startTileFallSequence(closestTile);
+            }
+
+            if (this.player.currTile.type == TileType.BOMB) {
+                this.startTileBombSequence(closestTile);
             }
         }
         else {
             this.player.currTile = null;
         }
+    }
+
+    public startTileFallSequence(tile: Tile): void {
+        let queue: Tile[] = [tile];
+        let interval: number = setInterval(() => {
+            if (queue.length == 0) {
+                clearInterval(interval);
+            }
+            else {
+                let tile: Tile = queue.shift();
+                this.level.getConnectingTiles(tile).forEach(connectingTile => {
+                    if (connectingTile.type == TileType.FALLING && !connectingTile.hasBeenTouched) {
+                        connectingTile.hasBeenTouched = true;
+                        connectingTile.touchOriginType = TileType.FALLING;
+                        queue.push(connectingTile);
+                    }
+                });
+            }
+        }, Game.TILE_FALL_INTERVAL);
+        this.tileActionIntervals.push(interval);
+    }
+
+    public startTileBombSequence(tile: Tile): void {
+        let queue: Tile[] = [tile];
+        let interval: number = setInterval(() => {
+            if (queue.length == 0) {
+                clearInterval(interval);
+            }
+            else {
+                let tile: Tile = queue.shift();
+                this.level.getFrontBackTiles(tile).forEach(connectingTile => {
+                    if (!connectingTile.hasBeenTouched && (connectingTile.type != TileType.STARTING && connectingTile.type != TileType.ENDING)) {
+                        connectingTile.hasBeenTouched = true;
+                        connectingTile.touchOriginType = TileType.BOMB;
+                        queue.push(connectingTile);
+                    }
+                });
+            }
+        }, Game.TILE_BOMB_INTERVAL);
+        this.tileActionIntervals.push(interval);
     }
 
     public updateCamera(): void {

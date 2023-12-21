@@ -84,7 +84,7 @@ export class Ring {
 
     public updateRender(): void {
         this.tiles.forEach(tile => {
-            tile.updateRender();
+            tile.update();
         });
     }
 }
