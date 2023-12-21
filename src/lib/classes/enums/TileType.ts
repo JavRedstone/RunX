@@ -14,7 +14,7 @@ export class TileType {
     public static getColor(type: number): string {
         switch (type) {
             case TileType.NORMAL:
-                return Color.RED;
+                return Color.BLUE;
             case TileType.FALLING:
                 return Color.GRAY;
             case TileType.JUMPING:
@@ -22,13 +22,13 @@ export class TileType {
             case TileType.BOMB:
                 return Color.YELLOW;
             case TileType.FORWARD:
-                return Color.ORANGE;
+                return Color.RED;
             case TileType.BACKWARD:
-                return Color.PURPLE;
+                return Color.MAGENTA;
             case TileType.STARTING:
                 return Color.BLUE;
             case TileType.ENDING:
-                return Color.MAGENTA;
+                return Color.BLUE;
             default:
             case TileType.EMPTY:
                 return '';
