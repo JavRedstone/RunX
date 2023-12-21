@@ -27,6 +27,40 @@ export class Ring {
         this.create();
     }
 
+    public getLeftTile(tile: Tile): Tile {
+        let index: number = this.tiles.indexOf(tile);
+        if (index == 0) {
+            return this.tiles[this.tiles.length - 1];
+        }
+        return this.tiles[index - 1];
+    }
+
+    public getRightTile(tile: Tile): Tile {
+        let index: number = this.tiles.indexOf(tile);
+        if (index == this.tiles.length - 1) {
+            return this.tiles[0];
+        }
+        return this.tiles[index + 1];
+    }
+
+    public rerender(): void {
+        this.tiles.forEach(tile => {
+            tile.create();
+        });
+    }
+
+    public update(): void {
+        this.tiles.forEach(tile => {
+            tile.update();
+        });
+    }
+
+    public updateRender(): void {
+        this.tiles.forEach(tile => {
+            tile.updateRender();
+        });
+    }
+
     public create(): void {
         let tileDistrib: NumDistrib = TileDistrib.getTileDistrib(this.level, this.sides);
         let tilePreference: number[] = TileDistrib.getTilePreference(this.level);
@@ -56,35 +90,7 @@ export class Ring {
         this.tiles = [];
     }
 
-    public getLeftTile(tile: Tile): Tile {
-        let index: number = this.tiles.indexOf(tile);
-        if (index == 0) {
-            return this.tiles[this.tiles.length - 1];
-        }
-        return this.tiles[index - 1];
-    }
-
-    public getRightTile(tile: Tile): Tile {
-        let index: number = this.tiles.indexOf(tile);
-        if (index == this.tiles.length - 1) {
-            return this.tiles[0];
-        }
-        return this.tiles[index + 1];
-    }
-
     public destroy(): void {
         this.tiles.forEach(tile => tile.destroy());
-    }
-
-    public rerender(): void {
-        this.tiles.forEach(tile => {
-            tile.create();
-        });
-    }
-
-    public updateRender(): void {
-        this.tiles.forEach(tile => {
-            tile.update();
-        });
     }
 }

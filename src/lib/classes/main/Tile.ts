@@ -51,6 +51,56 @@ export class Tile {
         this.create();
     }
 
+    public equals(other: Tile): boolean {
+        return this.position.equals(other.position) && this.rotation.equals(other.rotation) && this.dimensions.equals(other.dimensions) && this.type == other.type;
+    }
+
+    public getNormal(face: number): Vector3 {
+        return new Vector3(0, 1, 0).applyEuler(this.rotation);
+    }
+
+    public update(): void {
+        this.move();
+        this.updIntrinsic();
+    }
+
+    public move(): void {
+        if (this.hasBeenTouched) {
+            switch(this.touchOriginType) {
+                case TileType.FALLING:
+                    this.acceleration.y = -Tile.FALL_ACCELERATION;
+                    break;
+                case TileType.BOMB:
+                    this.scale.multiplyScalar(1 - Tile.SHRINK_RATE);
+                    break;
+            }
+        }
+    }
+
+    public distSurfaceTo(position: Vector3): number {
+        const localPoint = position.clone().sub(this.position).applyAxisAngle(new Vector3(1, 0, 0), -this.rotation.x);
+        const halfDimensions = this.dimensions.clone().multiplyScalar(0.5);
+        const dx = Math.max(Math.abs(localPoint.x) - halfDimensions.x, 0);
+        const dy = Math.max(Math.abs(localPoint.y) - halfDimensions.y, 0);
+        const dz = Math.max(Math.abs(localPoint.z) - halfDimensions.z, 0);
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+    public updIntrinsic(): void {
+        this.velocity.add(this.acceleration);
+        let rotatedVelocity: Vector3 = this.velocity.clone().applyEuler(
+            new Euler(this.rotation.x - Math.PI / 2, this.rotation.y, this.rotation.z)
+        );
+        this.position.add(rotatedVelocity);
+
+        if (this.position.distanceTo(new Vector3(this.position.x, 0, 0)) > Ring.RADIUS * Tile.MAX_FALL_MULTIPLIER) {
+            this.destroy();
+        }
+        if (this.scale.x < Tile.MIN_SHRINK_SCALE) {
+            this.destroy();
+        }
+    }
+
     public create(): void {
         this.destroyed = false;
         
@@ -95,33 +145,6 @@ export class Tile {
         this.reset();
     }
 
-    public equals(other: Tile): boolean {
-        return this.position.equals(other.position) && this.rotation.equals(other.rotation) && this.dimensions.equals(other.dimensions) && this.type == other.type;
-    }
-
-    public getNormal(face: number): Vector3 {
-        return new Vector3(0, 1, 0).applyEuler(this.rotation);
-    }
-
-    public update(): void {
-        this.move();
-        this.updIntrinsic();
-        this.updateRender();
-    }
-
-    public move(): void {
-        if (this.hasBeenTouched) {
-            switch(this.touchOriginType) {
-                case TileType.FALLING:
-                    this.acceleration.y = -Tile.FALL_ACCELERATION;
-                    break;
-                case TileType.BOMB:
-                    this.scale.multiplyScalar(1 - Tile.SHRINK_RATE);
-                    break;
-            }
-        }
-    }
-
     public updateRender(): void {
         if (this.mesh) {
             this.mesh.position.set(this.position.x, this.position.y, this.position.z);
@@ -134,30 +157,6 @@ export class Tile {
         }
         if (this.geometry) {
             this.mesh.geometry.scale(this.scale.x, this.scale.y, this.scale.z);
-        }
-    }
-
-    public distSurfaceTo(position: Vector3): number {
-        const localPoint = position.clone().sub(this.position).applyAxisAngle(new Vector3(1, 0, 0), -this.rotation.x);
-        const halfDimensions = this.dimensions.clone().multiplyScalar(0.5);
-        const dx = Math.max(Math.abs(localPoint.x) - halfDimensions.x, 0);
-        const dy = Math.max(Math.abs(localPoint.y) - halfDimensions.y, 0);
-        const dz = Math.max(Math.abs(localPoint.z) - halfDimensions.z, 0);
-        return Math.sqrt(dx * dx + dy * dy + dz * dz);
-    }
-
-    public updIntrinsic(): void {
-        this.velocity.add(this.acceleration);
-        let rotatedVelocity: Vector3 = this.velocity.clone().applyEuler(
-            new Euler(this.rotation.x - Math.PI / 2, this.rotation.y, this.rotation.z)
-        );
-        this.position.add(rotatedVelocity);
-
-        if (this.position.distanceTo(new Vector3(this.position.x, 0, 0)) > Ring.RADIUS * Tile.MAX_FALL_MULTIPLIER) {
-            this.destroy();
-        }
-        if (this.scale.x < Tile.MIN_SHRINK_SCALE) {
-            this.destroy();
         }
     }
 }

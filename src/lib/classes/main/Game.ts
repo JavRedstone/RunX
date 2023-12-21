@@ -12,7 +12,7 @@ export class Game {
     public static readonly GRAVITY: number = 0.005;
 
     public static readonly RENDER_START: number = 3;
-    public static readonly RENDER_END: number = 15;
+    public static readonly RENDER_END: number = 12;
 
     public static readonly TILE_FALL_INTERVAL: number = 50;
     public static readonly TILE_BOMB_INTERVAL: number = 100;
@@ -39,15 +39,11 @@ export class Game {
 
         this.startTicker();
     }
-
-    public destroy(): void {
-        this.level.destroy();
-        this.player.destroy();
-    }
     
     public startTicker(): void {
         this.globalTicker = setInterval(() => {
             this.update();
+            this.updateRender();
         }, 1000 / Game.TPS);
     }
 
@@ -55,7 +51,8 @@ export class Game {
         this.updatePlayer();
         this.updateCamera();
         this.updateLevelGeneration();
-        this.updateRender();
+
+        this.level.update();
     }
 
     public updatePlayer(): void {
@@ -188,5 +185,10 @@ export class Game {
 
     public updateRender(): void {
         this.level.updateRender();
+    }
+    
+    public destroy(): void {
+        this.level.destroy();
+        this.player.destroy();
     }
 }

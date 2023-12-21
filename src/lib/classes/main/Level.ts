@@ -5,7 +5,7 @@ import type { Tile } from "./Tile";
 
 export class Level {
     public static readonly STARTING_LENGTH: number = 10;
-    public static readonly ENDING_LENGTH: number = 50;
+    public static readonly ENDING_LENGTH: number = 25;
     public static readonly MIDDLE_LENGTH: number = 50;
 
     public static readonly MIN_SIDES: number = 4;
@@ -89,16 +89,6 @@ export class Level {
         return this.rings[ringIndex + 1];
     }
 
-    public destroy(): void {
-        this.rings.forEach(ring => ring.destroy());
-        this.rings = [];
-    }
-
-    public reset() {
-        this.destroy();
-        this.numRingsCreated = 0;
-    }
-
     public createNext(): void {
         if (this.numRingsCreated < Level.STARTING_LENGTH + Level.MIDDLE_LENGTH + Level.ENDING_LENGTH) {
             if (this.generatedRings.length > this.numRingsCreated) {
@@ -115,9 +105,25 @@ export class Level {
         }
     }
 
+    public reset() {
+        this.destroy();
+        this.numRingsCreated = 0;
+    }
+
+    public destroy(): void {
+        this.rings.forEach(ring => ring.destroy());
+        this.rings = [];
+    }
+
     public destroyLast(): void {
         this.rings[0].destroy();
         this.rings.shift();
+    }
+
+    public update(): void {
+        this.rings.forEach(ring => {
+            ring.update();
+        });
     }
 
     public updateRender(): void {
