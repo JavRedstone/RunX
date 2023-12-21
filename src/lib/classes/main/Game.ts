@@ -83,6 +83,7 @@ export class Game {
         if (this.player.currTile != null && this.player.currTile.type == TileType.ENDING) {
             this.level.destroy();
             this.level = new Level(this.scene, this.level.num + 1);
+            alert("Next level: " + this.level.num);
         }
     }
 

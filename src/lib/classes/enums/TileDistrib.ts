@@ -15,8 +15,8 @@ export class TileDistrib {
     public static readonly PREFERENCE_3: number[] = [5, 10, 5, 2];
     public static readonly PREFERENCE_4: number[] = [20, 15, 20, 2, 1];
     public static readonly PREFERENCE_5: number[] = [30, 20, 15, 5, 2];
-    public static readonly PREFERENCE_6: number[] = [30, 20, 30, 5, 5, 1, 1];
-    public static readonly PREFERENCE_7: number[] = [50, 10, 30, 5, 5, 2, 2];
+    public static readonly PREFERENCE_6: number[] = [30, 40, 30, 5, 5, 1, 1];
+    public static readonly PREFERENCE_7: number[] = [30, 30, 30, 5, 5, 2, 2];
 
     public static getTileDistrib(num: number, sides: number): NumDistrib {
         TileDistrib.DISTRIB_1.numSlots = sides;
