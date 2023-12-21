@@ -125,6 +125,7 @@ export class Game {
                     if (connectingTile.type == TileType.FALLING && !connectingTile.hasBeenTouched) {
                         connectingTile.hasBeenTouched = true;
                         connectingTile.touchOriginType = TileType.FALLING;
+                        connectingTile.destroyed = true;
                         queue.push(connectingTile);
                     }
                 });

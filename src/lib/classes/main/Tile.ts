@@ -157,7 +157,6 @@ export class Tile {
             this.destroy();
         }
         if (this.scale.x < Tile.MIN_SHRINK_SCALE) {
-            this.destroyed = true;
             this.destroy();
         }
     }
