@@ -4,9 +4,9 @@ import { Ring } from "./Ring";
 import type { Tile } from "./Tile";
 
 export class Level {
-    public static readonly STARTING_LENGTH: number = 5;
-    public static readonly ENDING_LENGTH: number = 100;
-    public static readonly MIDDLE_LENGTH: number = 20;
+    public static readonly STARTING_LENGTH: number = 10;
+    public static readonly ENDING_LENGTH: number = 50;
+    public static readonly MIDDLE_LENGTH: number = 50;
 
     public static readonly MIN_SIDES: number = 4;
     public static readonly MAX_SIDES: number = 8;
@@ -27,7 +27,31 @@ export class Level {
         this.sides = MathHelper.randIntRange(Level.MIN_SIDES, Level.MAX_SIDES);
     }
 
-    public getConnectingTiles(tile: Tile): Tile[] {
+    public getFrontBackTiles(tile: Tile): Tile[] {
+        let connectingTiles = [];
+        for (let ring of this.rings) {
+            let index: number = ring.tiles.indexOf(tile);
+            if (index != -1) {
+                let backRing: Ring = this.getBackRing(ring);
+                if (backRing) {
+                    let backTile: Tile = backRing.tiles[index];
+                    if (backTile) {
+                        connectingTiles.push(backTile);
+                    }
+                }
+                let frontRing: Ring = this.getFrontRing(ring);
+                if (frontRing) {
+                    let frontTile: Tile = frontRing.tiles[index];
+                    if (frontTile) {
+                        connectingTiles.push(frontTile);
+                    }
+                }
+            }
+        }
+        return connectingTiles;
+    }
+
+    public getLeftRightTiles(tile: Tile): Tile[] {
         let connectingTiles = [];
         for (let ring of this.rings) {
             let index: number = ring.tiles.indexOf(tile);
@@ -40,26 +64,29 @@ export class Level {
                 if (rightTile) {
                     connectingTiles.push(rightTile);
                 }
-                let leftRing: Ring = this.getLeftRing(ring);
-                if (leftRing != null) {
-                    connectingTiles.push(leftRing.tiles[index]);
-                }
-                connectingTiles.push(this.getRightRing(ring).tiles[index]);
-                console.log(connectingTiles)
             }
         }
         return connectingTiles;
     }
 
-    public getLeftRing(ring: Ring): Ring {
-        if (ring.num == 0) {
-            return null;
-        }
-        return this.rings[ring.num - 1];
+    public getConnectingTiles(tile: Tile): Tile[] {
+        return this.getFrontBackTiles(tile).concat(this.getLeftRightTiles(tile));
     }
 
-    public getRightRing(ring: Ring): Ring {
-        return this.rings[ring.num + 1];
+    public getBackRing(ring: Ring): Ring {
+        let ringIndex: number = this.rings.indexOf(ring);
+        if (ringIndex == 0) {
+            return null;
+        }
+        return this.rings[ringIndex - 1];
+    }
+
+    public getFrontRing(ring: Ring): Ring {
+        let ringIndex: number = this.rings.indexOf(ring);
+        if (ringIndex == this.rings.length - 1) {
+            return null;
+        }
+        return this.rings[ringIndex + 1];
     }
 
     public destroy(): void {
