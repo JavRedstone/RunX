@@ -116,6 +116,8 @@ export class Game {
     }
 
     public startTileFallSequence(tile: Tile): void {
+        tile.hasBeenTouched = true;
+        tile.touchOriginType = TileType.FALLING;
         let queue: Tile[] = [tile];
         let interval: number = setInterval(() => {
             if (queue.length == 0) {
@@ -136,6 +138,8 @@ export class Game {
     }
 
     public startTileBombSequence(tile: Tile): void {
+        tile.hasBeenTouched = true;
+        tile.touchOriginType = TileType.BOMB;
         let queue: Tile[] = [tile];
         let interval: number = setInterval(() => {
             if (queue.length == 0) {
