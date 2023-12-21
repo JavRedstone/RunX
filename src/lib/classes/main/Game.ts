@@ -148,7 +148,7 @@ export class Game {
             else {
                 let tile: Tile = queue.shift();
                 this.level.getFrontBackTiles(tile).forEach(connectingTile => {
-                    if (!connectingTile.hasBeenTouched && (connectingTile.type != TileType.STARTING && connectingTile.type != TileType.ENDING)) {
+                    if ((!connectingTile.hasBeenTouched || (connectingTile.hasBeenTouched && connectingTile.touchOriginType != TileType.BOMB)) && (connectingTile.type != TileType.STARTING && connectingTile.type != TileType.ENDING)) {
                         connectingTile.hasBeenTouched = true;
                         connectingTile.touchOriginType = TileType.BOMB;
                         connectingTile.destroyed = true;
