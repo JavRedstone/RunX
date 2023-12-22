@@ -101,6 +101,9 @@ export class Game {
     }
 
     public handlePlayerBounds(): void {
+        if (this.player.position.distanceTo(new Vector3(this.player.position.x, 0, 0)) > Ring.RADIUS * Player.MAX_FALL_MULTIPLIER) {
+            eventName.set(EventName.DEATH_INCREMENT);   
+        }
         if (this.player.position.distanceTo(new Vector3(this.player.position.x, 0, 0)) > Ring.RADIUS * Player.MAX_FALL_MULTIPLIER ||
             (this.player.currTile != null && this.player.currTile.type == TileType.ENDING) ||
             this.player.pressedReset

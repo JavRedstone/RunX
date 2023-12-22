@@ -5,12 +5,16 @@
     function startGame(): void {
         eventName.set(EventName.START);
     }
+
+    function openSettings(): void {
+        eventName.set(EventName.TOGGLE_SETTINGS);
+    }
 </script>
 
 <div class="start-wrapper">
     <h1 class="start-title">Run X</h1>
     <button class="start-button start-start" on:click={startGame}>Start</button>
-    <button class="start-button start-settings">Settings</button>
+    <button class="start-button start-settings" on:click={openSettings}>Settings</button>
 </div>
 
 <style>

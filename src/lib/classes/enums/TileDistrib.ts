@@ -10,8 +10,8 @@ export class TileDistrib {
     public static readonly DISTRIB_6: NumDistrib = new NumDistrib(1, TileType.BOOST + 1);
     public static readonly DISTRIB_7: NumDistrib = new NumDistrib(1, TileType.SLOW + 1);
 
-    public static readonly PREFERENCE_1: number[] = [5, 10];
-    public static readonly PREFERENCE_2: number[] = [5, 10, 10];
+    public static readonly PREFERENCE_1: number[] = [2, 10];
+    public static readonly PREFERENCE_2: number[] = [5, 10, 5];
     public static readonly PREFERENCE_3: number[] = [5, 10, 5, 2];
     public static readonly PREFERENCE_4: number[] = [20, 15, 20, 2, 1];
     public static readonly PREFERENCE_5: number[] = [30, 20, 15, 5, 2];

@@ -1,20 +1,30 @@
 <script lang="ts">
     import { EventName } from "$lib/classes/enums/Message";
-    import { eventName, isPaused } from "$lib/stores/store";
+    import { eventName } from "$lib/stores/store";
     import { onMount } from "svelte";
 
     let level: number = 1;
+    let deaths: number = 0;
 
     function pausePlay(): void {
         eventName.set(EventName.PAUSE_PLAY);
-        isPaused.set(!$isPaused);
     }
 
+    function openSettings(): void {
+        eventName.set(EventName.TOGGLE_SETTINGS);
+    }
+    
+    let isPaused: boolean = false;
     eventName.subscribe((value: EventName) => {
         if (value === EventName.LEVEL_INCREMENT) {
             level++;
         }
-        eventName.set(EventName.NONE);
+        else if (value === EventName.DEATH_INCREMENT) {
+            deaths++;
+        }
+        else if (value === EventName.PAUSE_PLAY) {
+            isPaused = !isPaused;
+        }
     });
 
     onMount(() => {
@@ -26,19 +36,19 @@
     });
 </script>
 
-{#if $isPaused}
+{#if isPaused}
     <div class="HUD-overlay">
         <button class="HUD-overlay-button HUD-overlay-resume" on:click={pausePlay}>Resume</button>
-        <button class="HUD-overlay-button HUD-overlay-settings">Settings</button>
+        <button class="HUD-overlay-button HUD-overlay-settings" on:click={openSettings}>Settings</button>
         <button class="HUD-overlay-button HUD-overlay-quit" on:click={() => location.reload()}>Quit Game</button>
     </div>
 {/if}
 <div class="HUD-wrapper">
     <div class="HUD-level-counter">
-        Level {level}
+        Level {level} | Deaths {deaths}
     </div>
-    <button class="HUD-pause" on:click={pausePlay} tabindex="-1">
-        {#if $isPaused}
+    <button class="HUD-pause-play" on:click={pausePlay} tabindex="-1">
+        {#if isPaused}
             <img class="HUD-pause-play-icon" src="UI/play.svg" alt="Play icon">
         {:else}
             <img class="HUD-pause-play-icon" src="UI/pause.svg" alt="Pause icon">
@@ -59,7 +69,7 @@
     .HUD-overlay-button {
         position: absolute;
         left: 50%;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%);
         width: 20rem;
         height: 4rem;
         border: none;
@@ -110,7 +120,7 @@
         text-align: center;
     }
 
-    .HUD-pause {
+    .HUD-pause-play {
         position: absolute;
         top: 0;
         right: 0;
