@@ -1,12 +1,13 @@
 <script lang="ts">
     import { EventName } from "$lib/classes/enums/Message";
-    import { eventName } from "$lib/stores/store";
+    import { eventName, isPaused } from "$lib/stores/store";
     import { onMount } from "svelte";
 
     let level: number = 1;
 
     function pausePlay(): void {
         eventName.set(EventName.PAUSE_PLAY);
+        isPaused.set(!$isPaused);
     }
 
     eventName.subscribe((value: EventName) => {
@@ -25,16 +26,71 @@
     });
 </script>
 
+{#if $isPaused}
+    <div class="HUD-overlay">
+        <button class="HUD-overlay-button HUD-overlay-resume" on:click={pausePlay}>Resume</button>
+        <button class="HUD-overlay-button HUD-overlay-settings">Settings</button>
+        <button class="HUD-overlay-button HUD-overlay-quit" on:click={() => location.reload()}>Quit Game</button>
+    </div>
+{/if}
 <div class="HUD-wrapper">
     <div class="HUD-level-counter">
         Level {level}
     </div>
-    <button class="HUD-pause" on:click={pausePlay}>
-        <img class="HUD-pause-play-icon" src="/UI/pause.svg" alt="Pause" />
+    <button class="HUD-pause" on:click={pausePlay} tabindex="-1">
+        {#if $isPaused}
+            <img class="HUD-pause-play-icon" src="UI/play.svg" alt="Play icon">
+        {:else}
+            <img class="HUD-pause-play-icon" src="UI/pause.svg" alt="Pause icon">
+        {/if}
     </button>
 </div>
 
 <style>
+    .HUD-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .HUD-overlay-button {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20rem;
+        height: 4rem;
+        border: none;
+        border-radius: 0;
+        background-color: #808080;
+        border: 0.2rem solid #ffffff;
+        color: #ffffff;
+        font-family: 'Poppins', sans-serif;
+        font-size: 2rem;
+
+        transition: 0.25s;
+
+        &:hover {
+            cursor: pointer;
+
+            background-color: #5399f5;
+        }
+    }
+
+    .HUD-overlay-resume {
+        top: calc(10rem);
+    }
+
+    .HUD-overlay-settings {
+        top: calc(16rem);
+    }
+
+    .HUD-overlay-quit {
+        top: calc(22rem);
+    }
+    
     .HUD-wrapper {
         position: absolute;
         top: 0;
@@ -61,6 +117,7 @@
         outline: none;
         border: none;
         background-color: transparent;
+
 
         &:hover {
             cursor: pointer;

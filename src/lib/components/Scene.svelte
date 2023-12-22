@@ -4,10 +4,9 @@
     import { Tile } from '$lib/classes/main/Tile';
     import { T, useThrelte, type ThrelteContext, useTask, type Size } from '@threlte/core';
     import { OrbitControls } from '@threlte/extras';
-    import { BlendFunction, BloomEffect, EffectComposer, EffectPass, GodRaysEffect, KernelSize, RenderPass } from 'postprocessing';
+    import { BlendFunction, BloomEffect, ChromaticAberrationEffect, EffectComposer, EffectPass, KernelSize, PixelationEffect, RenderPass } from 'postprocessing';
     import { onMount } from 'svelte';
     import { Fog, type Camera } from 'three';
-    import { eventName } from '$lib/stores/store';
 
     const TC: ThrelteContext = useThrelte();
     const { scene, renderer, camera, size, autoRender, renderStage } = TC;

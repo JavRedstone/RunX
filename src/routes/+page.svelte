@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </svelte:head>
 
-<div>
+<div class="app">
   <App />
 </div>
 
@@ -24,7 +24,7 @@
     font-family: 'Poppins', sans-serif;
   }
 
-  div {
+  .app {
     width: 100vw;
     height: 100vh;
     background-color: #000000;

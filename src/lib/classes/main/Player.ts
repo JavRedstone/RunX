@@ -73,11 +73,11 @@ export class Player {
         this.rotation = new Euler(0, 0, 0);
         this.scale = new Vector3(1, 1, 1);
 
-        this.pressedJump = false;
-        this.pressedRun = false;
-        this.pressedStrafeLeft = false;
-        this.pressedStrafeRight = false;
-        this.pressedReset = false;
+        // this.pressedJump = false;
+        // this.pressedRun = false;
+        // this.pressedStrafeLeft = false;
+        // this.pressedStrafeRight = false;
+        // this.pressedReset = false;
 
         this.justJumped = false;
         this.isInAir = true;
