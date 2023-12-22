@@ -4,5 +4,5 @@
 </script>
 
 <Canvas>
-  <Scene />
+  <Scene></Scene>
 </Canvas>

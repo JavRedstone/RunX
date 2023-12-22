@@ -101,6 +101,8 @@
             autoRender.set(before);
         }
     });
+
+    let message: string = 'Hello World!';
 </script>
 
 <T.PerspectiveCamera
