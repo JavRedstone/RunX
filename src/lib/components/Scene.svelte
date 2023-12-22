@@ -46,26 +46,11 @@
         });
         let bloomEffectPass: EffectPass = new EffectPass(camera, bloomEffect);
         bloomEffectPass.renderToScreen = true;
-        
-        const godraysEffect: GodRaysEffect = new GodRaysEffect(camera, game.sunMesh, {
-            blendFunction: BlendFunction.SCREEN,
-            kernelSize: KernelSize.SMALL,
-            density: 0.96,
-            decay: 0.92,
-            weight: 0.3,
-            exposure: 0.55,
-            samples: 60,
-            clampMax: 1.0,
-            resolutionScale: 0.5,
-        });
-        let godraysEffectPass: EffectPass = new EffectPass(camera, godraysEffect);
-        godraysEffectPass.renderToScreen = true;
 
         effectComposer.removeAllPasses();
         effectComposer.setSize(window.innerWidth, window.innerHeight);
         effectComposer.addPass(renderPass);
-        // effectComposer.addPass(bloomEffectPass);
-        effectComposer.addPass(godraysEffectPass);
+        effectComposer.addPass(bloomEffectPass);
     }
 
     function updateComposerSize(size: Size): void {
@@ -134,11 +119,3 @@
     bind:ref={game.orbitControls}
   />
 </T.PerspectiveCamera>
-
-<T.DirectionalLight
-  intensity={1}
-  position.x={5}
-  position.y={10}
-  color={Color.BLUE}
-/>
-<T.AmbientLight intensity={0.2} />

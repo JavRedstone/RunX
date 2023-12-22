@@ -47,20 +47,7 @@ export class Game {
 
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-        this.createSun();
         this.startTicker();
-    }
-
-    public createSun(): void {
-        this.sunGeometry = new BoxGeometry(10 * Tile.LENGTH, 0.1, Ring.RADIUS * 2);
-        this.sunMaterial = new MeshLambertMaterial({ color: Color.BLUE, emissive: Color.BLUE });
-        this.sunMesh = new Mesh(this.sunGeometry, this.sunMaterial);
-        this.sunMesh.position.set(0, 10, 0);
-        this.scene.add(this.sunMesh);
-
-        this.pointLight = new PointLight(Color.BLUE, 1, 100);
-        this.pointLight.position.set(0, 10, 0);
-        this.scene.add(this.pointLight);
     }
     
     public startTicker(): void {
@@ -73,7 +60,6 @@ export class Game {
     public update(): void {
         this.updatePlayer();
         this.updateCamera();
-        this.updateSun();
         this.updateLevelGeneration();
 
         this.level.update();
@@ -186,12 +172,6 @@ export class Game {
             }
         }, Game.TILE_BOMB_INTERVAL);
         this.tileActionIntervals.push(interval);
-    }
-
-    public updateSun(): void {
-        let sunPosition = new Vector3(this.player.position.x, -5, 0).applyEuler(new Euler(this.player.rotation.x - Math.PI, this.player.rotation.y, this.player.rotation.z));
-        this.sunMesh.position.copy(sunPosition);
-        this.pointLight.position.copy(sunPosition);
     }
 
     public updateCamera(): void {
