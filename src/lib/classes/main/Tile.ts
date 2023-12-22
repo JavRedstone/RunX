@@ -7,7 +7,7 @@ export class Tile {
     public static readonly HEIGHT: number = 0.1;
 
     public static readonly JUMPING_BOOST_SPEED: number = 0.2;
-    public static readonly FORWARD_BOOST_SPEED: number = 0.1;
+    public static readonly FORWARD_BOOST_SPEED: number = 0.05;
 
     public static readonly FALL_ACCELERATION: number = 0.003;
     public static readonly MAX_FALL_MULTIPLIER: number = 3;
@@ -53,7 +53,8 @@ export class Tile {
     }
 
     public equals(other: Tile): boolean {
-        return this.position.equals(other.position) && this.rotation.equals(other.rotation) && this.dimensions.equals(other.dimensions) && this.type == other.type;
+        // return this.position.equals(other.position) && this.rotation.equals(other.rotation) && this.dimensions.equals(other.dimensions) && this.type == other.type;
+        return this.position.equals(other.position) && this.rotation.equals(other.rotation) && this.type == other.type;
     }
 
     public getNormal(face: number): Vector3 {
@@ -106,7 +107,8 @@ export class Tile {
         this.destroyed = false;
         
         this.geometry = new BoxGeometry(this.dimensions.x, this.dimensions.y, this.dimensions.z);
-        this.material = new MeshLambertMaterial({ color: this.color, emissive: this.color });
+        // this.material = new MeshLambertMaterial({ color: this.color, emissive: this.color });
+        this.material = new MeshLambertMaterial({ color: this.color });
         this.mesh = new Mesh(this.geometry, this.material);
         this.mesh.position.set(this.position.x, this.position.y, this.position.z);
         this.mesh.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
@@ -154,7 +156,7 @@ export class Tile {
         }
         if (this.material) {
             this.material.color.set(this.color);
-            this.material.emissive.set(this.color);
+            // this.material.emissive.set(this.color);
         }
         if (this.geometry) {
             this.mesh.geometry.scale(this.scale.x, this.scale.y, this.scale.z);

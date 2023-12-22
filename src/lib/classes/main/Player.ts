@@ -4,9 +4,10 @@ import { Color } from "../enums/Color";
 import { Tile } from "./Tile";
 import { Ring } from "./Ring";
 import { TileType } from "../enums/TileType";
+import { MathHelper } from "../helpers/MathHelper";
 
 export class Player {
-    public static readonly COLOR: string = Color.CYAN;
+    public static readonly COLOR: string = Color.WHITE;
 
     public static readonly RADIUS: number = 0.1;
     public static readonly WALKING_SPEED: number = 0.08;
@@ -30,9 +31,13 @@ export class Player {
 
     public justJumped: boolean = false;
     public isInAir: boolean = true;
+    
     public underBoost: boolean = false;
+    public underSlow: boolean = false;
+    public prevTileType: number = TileType.NORMAL;
 
     public currTile: Tile;
+    public justHitTile: boolean = false;
 
     public destroyed: boolean = false;
 
@@ -77,6 +82,7 @@ export class Player {
         this.justJumped = false;
         this.isInAir = true;
         this.underBoost = false;
+        this.underSlow = false;
     }
 
     public destroy(): void {
@@ -119,6 +125,9 @@ export class Player {
         if (this.underBoost) {
             this.velocity.x += Tile.FORWARD_BOOST_SPEED;
         }
+        else if (this.underSlow) {
+            this.velocity.x -= Tile.FORWARD_BOOST_SPEED;
+        }
         if ((this.pressedStrafeLeft && this.pressedStrafeRight) || (!this.pressedStrafeLeft && !this.pressedStrafeRight)) {
             this.velocity.z = 0;
         }
@@ -131,7 +140,7 @@ export class Player {
     }
 
     public updTileEffects(): void {
-        if (this.currTile != null) {
+        if (this.currTile != null && this.justHitTile) {
             switch(this.currTile.type) {
                 case TileType.JUMPING:
                     this.justJumped = true;
@@ -139,21 +148,25 @@ export class Player {
                     this.velocity.y = 0;
                     this.velocity.y += Tile.JUMPING_BOOST_SPEED;
                     break;
-                case TileType.FORWARD:
-                    this.underBoost = true;
+                case TileType.BOOST:
+                    this.underBoost = !this.underBoost;
+                    this.underSlow = false;
                     break;
-                case TileType.BACKWARD:
+                case TileType.SLOW:
+                    this.underSlow = !this.underSlow;
                     this.underBoost = false;
                     break;
             }
+            this.justHitTile = false;
         }
     }
 
     public updIntrinsic(): void {
         if (this.currTile != null && !this.currTile.destroyed && !this.justJumped) {
             let rotatedPosition: Vector3 = this.position.clone().applyAxisAngle(new Vector3(1, 0, 0), -this.currTile.rotation.x + Math.PI / 2);
-            if (rotatedPosition.y < Tile.HEIGHT / 2 + Player.RADIUS - Ring.RADIUS) {
-                this.position = rotatedPosition.setY(this.currTile.position.clone().applyAxisAngle(new Vector3(1, 0, 0), -this.currTile.rotation.x + Math.PI / 2).y + Tile.HEIGHT / 2 + Player.RADIUS).applyAxisAngle(new Vector3(1, 0, 0), this.currTile.rotation.x - Math.PI / 2)
+            let minHeight: number = this.currTile.position.clone().applyAxisAngle(new Vector3(1, 0, 0), -this.currTile.rotation.x + Math.PI / 2).y + Tile.HEIGHT / 2 + Player.RADIUS - MathHelper.EPSILON;
+            if (rotatedPosition.y < minHeight) {
+                this.position = rotatedPosition.setY(minHeight).applyAxisAngle(new Vector3(1, 0, 0), this.currTile.rotation.x - Math.PI / 2)
             }
             this.acceleration.y = 0;
             this.velocity.y = 0;

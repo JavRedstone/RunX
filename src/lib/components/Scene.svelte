@@ -4,9 +4,9 @@
     import { Tile } from '$lib/classes/main/Tile';
     import { T, useThrelte, type ThrelteContext, useTask, type Size } from '@threlte/core';
     import { OrbitControls } from '@threlte/extras';
-    import { BlendFunction, BloomEffect, EffectComposer, EffectPass, KernelSize, RenderPass } from 'postprocessing';
+    import { BlendFunction, BloomEffect, EffectComposer, EffectPass, GodRaysEffect, KernelSize, RenderPass } from 'postprocessing';
     import { onMount } from 'svelte';
-    import { Fog, type Camera } from 'three';
+    import { Fog, type Camera, Mesh, AmbientLight } from 'three';
 
     const TC: ThrelteContext = useThrelte();
     const { scene, renderer, camera, size, autoRender, renderStage } = TC;
@@ -16,7 +16,7 @@
     setMovement();
 
     let effectComposer: EffectComposer = new EffectComposer(renderer);
-    const fog: Fog = new Fog(Color.BLACK, Tile.LENGTH * 10, Tile.LENGTH * 15);
+    const fog: Fog = new Fog(Color.BLACK, Tile.LENGTH * 10, Tile.LENGTH * 12);
     setupEffectComposer();
 
     function setupEffectComposer(): void {
@@ -35,7 +35,8 @@
         scene.fog = fog;
     }
 
-    function updateBloomEffect(camera: Camera): void {
+    function updateEffects(camera: Camera): void {
+        let renderPass: RenderPass = new RenderPass(scene, camera);
         const bloomEffect: BloomEffect = new BloomEffect({
             blendFunction: BlendFunction.SCREEN,
             luminanceThreshold: 0,
@@ -43,14 +44,28 @@
             intensity: 0.75,
             kernelSize: KernelSize.HUGE,
         });
-        let renderPass: RenderPass = new RenderPass(scene, camera);
-        let effectPass: EffectPass = new EffectPass(camera, bloomEffect);
-        effectPass.renderToScreen = true;
+        let bloomEffectPass: EffectPass = new EffectPass(camera, bloomEffect);
+        bloomEffectPass.renderToScreen = true;
+        
+        const godraysEffect: GodRaysEffect = new GodRaysEffect(camera, game.sunMesh, {
+            blendFunction: BlendFunction.SCREEN,
+            kernelSize: KernelSize.SMALL,
+            density: 0.96,
+            decay: 0.92,
+            weight: 0.3,
+            exposure: 0.55,
+            samples: 60,
+            clampMax: 1.0,
+            resolutionScale: 0.5,
+        });
+        let godraysEffectPass: EffectPass = new EffectPass(camera, godraysEffect);
+        godraysEffectPass.renderToScreen = true;
 
         effectComposer.removeAllPasses();
         effectComposer.setSize(window.innerWidth, window.innerHeight);
         effectComposer.addPass(renderPass);
-        effectComposer.addPass(effectPass);
+        // effectComposer.addPass(bloomEffectPass);
+        effectComposer.addPass(godraysEffectPass);
     }
 
     function updateComposerSize(size: Size): void {
@@ -59,7 +74,7 @@
     
     function updateRenderPass(camera: Camera, size: Size): void {
         updateFog();
-        updateBloomEffect(camera);
+        updateEffects(camera);
         updateComposerSize(size);
     }
 
@@ -119,3 +134,11 @@
     bind:ref={game.orbitControls}
   />
 </T.PerspectiveCamera>
+
+<T.DirectionalLight
+  intensity={1}
+  position.x={5}
+  position.y={10}
+  color={Color.BLUE}
+/>
+<T.AmbientLight intensity={0.2} />

@@ -1,10 +1,11 @@
-import { Vector3, type Scene, Quaternion, Euler, PerspectiveCamera } from "three";
+import { Vector3, type Scene, Quaternion, Euler, PerspectiveCamera, Mesh, SphereGeometry, MeshLambertMaterial, BoxGeometry, PointLight } from "three";
 import { Level } from "./Level";
 import { Player } from "./Player";
 import { TileType } from "../enums/TileType";
 import { Pair } from "../structs/Pair";
 import { Tile } from "./Tile";
 import { Ring } from "./Ring";
+import { Color } from "../enums/Color";
 
 export class Game {
     public static readonly TPS: number = 60;
@@ -23,6 +24,12 @@ export class Game {
     public scene: Scene;
     public camera: PerspectiveCamera;
     public orbitControls: any;
+
+    public sunMesh: Mesh;
+    public sunGeometry: BoxGeometry;
+    public sunMaterial: MeshLambertMaterial;
+    public pointLight: PointLight;
+
     public cameraTargetPosition: Vector3;
     public cameraTargetRotation: Euler;
 
@@ -40,7 +47,20 @@ export class Game {
 
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
+        this.createSun();
         this.startTicker();
+    }
+
+    public createSun(): void {
+        this.sunGeometry = new BoxGeometry(10 * Tile.LENGTH, 0.1, Ring.RADIUS * 2);
+        this.sunMaterial = new MeshLambertMaterial({ color: Color.BLUE, emissive: Color.BLUE });
+        this.sunMesh = new Mesh(this.sunGeometry, this.sunMaterial);
+        this.sunMesh.position.set(0, 10, 0);
+        this.scene.add(this.sunMesh);
+
+        this.pointLight = new PointLight(Color.BLUE, 1, 100);
+        this.pointLight.position.set(0, 10, 0);
+        this.scene.add(this.pointLight);
     }
     
     public startTicker(): void {
@@ -53,6 +73,7 @@ export class Game {
     public update(): void {
         this.updatePlayer();
         this.updateCamera();
+        this.updateSun();
         this.updateLevelGeneration();
 
         this.level.update();
@@ -91,7 +112,7 @@ export class Game {
         let tileDists: Pair[] = [];
         this.level.rings.forEach(ring => {
             ring.tiles.forEach(tile => {
-                if (!tile.destroyed && tile.type != TileType.EMPTY && (this.player.currTile == null || !this.player.currTile.equals(tile))) {
+                if (!tile.destroyed && tile.type != TileType.EMPTY) {
                     let distance: number = tile.distSurfaceTo(this.player.position);
                     if (distance < Player.RADIUS) {
                         tileDists.push(new Pair(tile, distance));
@@ -103,15 +124,18 @@ export class Game {
         if (tileDists.length > 0) {
             tileDists.sort((a, b) => a.second - b.second);
             let closestTile: Tile = tileDists[0].first;
-            this.player.currTile = closestTile;
-            this.player.rotation.set(closestTile.rotation.x - Math.PI / 2, closestTile.rotation.y, closestTile.rotation.z);
-        
-            if (this.player.currTile.type == TileType.FALLING) {
-                this.startTileFallSequence(closestTile);
-            }
-
-            if (this.player.currTile.type == TileType.BOMB) {
-                this.startTileBombSequence(closestTile);
+            if (this.player.currTile == null || (this.player.currTile != null && !this.player.currTile.equals(closestTile))) {
+                this.player.currTile = closestTile;
+                this.player.justHitTile = true;
+                this.player.rotation.set(closestTile.rotation.x - Math.PI / 2, closestTile.rotation.y, closestTile.rotation.z);
+            
+                if (this.player.currTile.type == TileType.FALLING) {
+                    this.startTileFallSequence(closestTile);
+                }
+    
+                if (this.player.currTile.type == TileType.BOMB) {
+                    this.startTileBombSequence(closestTile);
+                }
             }
         }
         else {
@@ -162,6 +186,12 @@ export class Game {
             }
         }, Game.TILE_BOMB_INTERVAL);
         this.tileActionIntervals.push(interval);
+    }
+
+    public updateSun(): void {
+        let sunPosition = new Vector3(this.player.position.x, -5, 0).applyEuler(new Euler(this.player.rotation.x - Math.PI, this.player.rotation.y, this.player.rotation.z));
+        this.sunMesh.position.copy(sunPosition);
+        this.pointLight.position.copy(sunPosition);
     }
 
     public updateCamera(): void {

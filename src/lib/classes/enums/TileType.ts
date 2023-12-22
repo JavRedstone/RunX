@@ -8,8 +8,8 @@ export class TileType {
     public static readonly FALLING: number = 2;
     public static readonly JUMPING: number = 3;
     public static readonly BOMB: number = 4;
-    public static readonly FORWARD: number = 5;
-    public static readonly BACKWARD: number = 6;
+    public static readonly BOOST: number = 5;
+    public static readonly SLOW: number = 6;
 
     public static getColor(type: number): string {
         switch (type) {
@@ -21,10 +21,10 @@ export class TileType {
                 return Color.GREEN;
             case TileType.BOMB:
                 return Color.YELLOW;
-            case TileType.FORWARD:
+            case TileType.BOOST:
+                return Color.CYAN;
+            case TileType.SLOW:
                 return Color.RED;
-            case TileType.BACKWARD:
-                return Color.MAGENTA;
             case TileType.STARTING:
                 return Color.BLUE;
             case TileType.ENDING:
