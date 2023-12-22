@@ -6,6 +6,8 @@ import { Pair } from "../structs/Pair";
 import { Tile } from "./Tile";
 import { Ring } from "./Ring";
 import { Color } from "../enums/Color";
+import { eventName } from "$lib/stores/store";
+import { EventName } from "../enums/Message";
 
 export class Game {
     public static readonly TPS: number = 60;
@@ -36,9 +38,30 @@ export class Game {
     public tileActionIntervals: number[] = [];
 
     public globalTicker: number = 0;
+    public stoppedTicker: boolean = false;
 
     public constructor(scene: Scene) {
         this.scene = scene;
+
+        this.setupEventDistributor();
+    }
+
+    public setupEventDistributor(): void {
+        eventName.subscribe(value => {
+            switch (value) {
+                case EventName.START:
+                    this.start();
+                    break;
+                case EventName.PAUSE_PLAY:
+                    if (this.stoppedTicker) {
+                        this.startTicker();
+                    }
+                    else {
+                        this.stopTicker();
+                    }
+                    break;
+            }
+        });
     }
 
     public start(): void {
@@ -55,6 +78,12 @@ export class Game {
             this.update();
             this.updateRender();
         }, 1000 / Game.TPS);
+        this.stoppedTicker = false;
+    }
+
+    public stopTicker(): void {
+        clearInterval(this.globalTicker);
+        this.stoppedTicker = true;
     }
 
     public update(): void {
@@ -90,7 +119,7 @@ export class Game {
         if (this.player.currTile != null && this.player.currTile.type == TileType.ENDING) {
             this.level.destroy();
             this.level = new Level(this.scene, this.level.num + 1);
-            alert("Next level: " + this.level.num);
+            eventName.set(EventName.LEVEL_INCREMENT);
         }
     }
 

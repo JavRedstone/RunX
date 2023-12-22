@@ -6,7 +6,8 @@
     import { OrbitControls } from '@threlte/extras';
     import { BlendFunction, BloomEffect, EffectComposer, EffectPass, GodRaysEffect, KernelSize, RenderPass } from 'postprocessing';
     import { onMount } from 'svelte';
-    import { Fog, type Camera, Mesh, AmbientLight } from 'three';
+    import { Fog, type Camera } from 'three';
+    import { eventName } from '$lib/stores/store';
 
     const TC: ThrelteContext = useThrelte();
     const { scene, renderer, camera, size, autoRender, renderStage } = TC;
@@ -101,8 +102,7 @@
             autoRender.set(before);
         }
     });
-
-    let message: string = 'Hello World!';
+    
 </script>
 
 <T.PerspectiveCamera

@@ -4,7 +4,7 @@ import { Ring } from "./Ring";
 import type { Tile } from "./Tile";
 
 export class Level {
-    public static readonly STARTING_LENGTH: number = 10;
+    public static readonly STARTING_LENGTH: number = 12;
     public static readonly ENDING_LENGTH: number = 25;
     public static readonly MIDDLE_LENGTH: number = 50;
 
