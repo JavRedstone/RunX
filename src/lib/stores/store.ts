@@ -11,7 +11,7 @@ export const toggles = writable({
     won: false,
 });
 export const sceneSettings = writable({
-    sceneLength: 0,
+    levelLength: 0,
     numSides: 0,
     ringRadius: 0,
     gravity: 0,
@@ -22,6 +22,9 @@ export const stats = writable({
     level: 1,
     deaths: 0,
     time: 0
+});
+export const gameSettings = writable({
+    renderDistance: 12,
 });
 export const musicSettings = writable({
     volume: 100,

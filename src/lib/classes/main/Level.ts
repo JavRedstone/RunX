@@ -116,7 +116,6 @@ export class Level {
             this.numRingsCreated++;
         }
     }
-
     public reset() {
         this.destroy();
         this.numRingsCreated = 0;
@@ -131,6 +130,12 @@ export class Level {
     public destroyLast(): void {
         this.rings[0].destroy();
         this.rings.shift();
+    }
+    
+    public destroyFirst(): void {
+        this.rings[this.rings.length - 1].destroy();
+        this.rings.pop();
+        this.numRingsCreated--;
     }
 
     public update(): void {

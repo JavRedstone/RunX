@@ -5,7 +5,7 @@ import { TileType } from "../enums/TileType";
 import { Pair } from "../structs/Pair";
 import { Tile } from "./Tile";
 import { Ring } from "./Ring";
-import { sceneSettings, toggles } from "$lib/stores/store";
+import { gameSettings, sceneSettings, toggles } from "$lib/stores/store";
 import { stats } from "$lib/stores/store";
 
 export class Game {
@@ -14,7 +14,7 @@ export class Game {
     public static GRAVITY: number = 0.005;
 
     public static readonly RENDER_START: number = 3;
-    public static readonly RENDER_END: number = 12;
+    public static RENDER_END: number = 12;
 
     public static readonly TILE_FALL_INTERVAL: number = 50;
     public static readonly TILE_BOMB_INTERVAL: number = 25;
@@ -70,6 +70,10 @@ export class Game {
             if (value.mode) {
                 this.mode = value.mode;
             }
+        });
+
+        gameSettings.subscribe(value => {
+            Game.RENDER_END = value.renderDistance;
         });
 
         sceneSettings.subscribe(value => {
@@ -297,6 +301,9 @@ export class Game {
         let numAfter: number = Game.RENDER_END + Game.RENDER_START - this.level.rings.length;
         for (let i = 0; i < numAfter; i++) {
             this.level.createNext();
+        }
+        for (let i = 0; i < -numAfter; i++) {
+            this.level.destroyFirst();
         }
         if (this.player.position.x - Game.RENDER_START * Tile.LENGTH > this.level.rings[0].tiles[0].position.x) {
             this.level.destroyLast();

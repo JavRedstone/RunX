@@ -27,7 +27,7 @@
         sceneSettings.update((value) => {
             return {
                 ...value,
-                sceneLength: sceneLength,
+                levelLength: sceneLength,
                 numSides: numSides,
                 ringRadius: ringRadius,
                 gravity: gravity,

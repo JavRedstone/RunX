@@ -1,8 +1,9 @@
 <script lang="ts">
-    import { toggles } from "$lib/stores/store";
+    import { gameSettings, toggles } from "$lib/stores/store";
     import { musicSettings } from "$lib/stores/store";
 
-    let volume: number = 100;
+    let volume: number = $musicSettings.volume;
+    let renderDistance: number = $gameSettings.renderDistance;
 
     function exitSettings(): void {
         toggles.update((value) => {
@@ -22,15 +23,34 @@
         });
     }
 
-    $: if (volume) musicSettings.update((value) => {
-        return {
-            ...value,
-            volume: volume
-        }
-    });
+    function updateMusicSettings(): void {
+        musicSettings.update((value) => {
+            return {
+                ...value,
+                volume: volume
+            }
+        });
+    }
+
+    function updateGameSettings(): void {
+        gameSettings.update((value) => {
+            return {
+                ...value,
+                renderDistance: renderDistance
+            }
+        });
+    }
+
+    $: if (volume) updateMusicSettings();
+
+    $: if (renderDistance) updateGameSettings();
 </script>
 
 <div class="settings-wrapper">
+    <h1>Game Settings</h1>
+    <input class="settings-slider" type="range" min="6" max="128" bind:value={renderDistance}>
+    <p class="settings-slider-value">Render distance (tiles): {renderDistance}</p>
+    <h1>Music Settings</h1>
     <button class="settings-toggle" on:click={exitSettings} tabindex="-1">
         <img class="settings-toggle-icon" src="UI/exit.svg" alt="Exit icon">
     </button>
@@ -41,8 +61,8 @@
             Mute music
         {/if}
     </button>
-    <input class="settings-volume-slider" type="range" min="1" max="100" bind:value={volume}>
-    <p class="settings-volume">Volume: {volume}</p>
+    <input class="settings-slider" type="range" min="1" max="100" bind:value={volume}>
+    <p class="settings-slider-value">Volume: {volume}</p>
 </div>
 
 <style>
@@ -82,9 +102,6 @@
     }
 
     .settings-button {
-        position: absolute;
-        left: 50%;
-        transform: translate(-50%);
         width: 20rem;
         height: 4rem;
         border-radius: 0.5rem;
@@ -104,17 +121,17 @@
         }
     }
 
-    .settings-volume-slider {
+    .settings-slider {
         -webkit-appearance: none;
         width: calc(100% - 2rem);
         height: 1rem;
-        margin-top: 6rem;
+        margin-top: 1rem;
         border-radius: 5px;
         background: #f56e53;
         outline: none;
     }
 
-    .settings-volume-slider::-webkit-slider-thumb {
+    .settings-slider::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
         width: 2rem;
@@ -124,7 +141,7 @@
         cursor: pointer;
     }
 
-    .settings-volume-slider::-moz-range-thumb {
+    .settings-slider::-moz-range-thumb {
         width: 2rem;
         height: 2rem;
         border-radius: 50%;
@@ -132,7 +149,7 @@
         cursor: pointer;
     }
     
-    .settings-volume {
+    .settings-slider-value {
         margin: 0;
         font-size: 1.5rem;
     }
