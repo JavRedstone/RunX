@@ -124,7 +124,6 @@ export class Level {
     public destroy(): void {
         this.rings.forEach(ring => ring.destroy());
         this.rings = [];
-        this.generatedRings = [];
     }
 
     public destroyLast(): void {
