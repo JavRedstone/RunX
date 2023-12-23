@@ -67,7 +67,7 @@ export class Player {
     }
 
     public reset(): void {
-        this.position = new Vector3(Tile.LENGTH * 2, -Ring.RADIUS + Tile.HEIGHT / 2 + Player.RADIUS, 0);
+        this.position = new Vector3(Tile.LENGTH * 3, -Ring.RADIUS + Tile.HEIGHT / 2 + Player.RADIUS, 0);
         this.velocity = new Vector3(0, 0, 0);
         this.acceleration = new Vector3(0, 0, 0);
         this.rotation = new Euler(0, 0, 0);
