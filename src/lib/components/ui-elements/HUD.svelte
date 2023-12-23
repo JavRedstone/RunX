@@ -60,6 +60,7 @@
         width: 100vw;
         height: 100vh;
         background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(0.5rem);
     }
 
     .HUD-overlay-button {
