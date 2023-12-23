@@ -3,10 +3,11 @@
 Website: https://runx.pages.dev/
 
 A better variation of Run3
-- 6 Tile types
 - Smooth gameplay
 - 3D graphics
 - Three JS
+- 6 Tile types
+- 2 Game modes
 
 # Music Credits
 
