@@ -76,6 +76,7 @@
         text-align: left;
         padding: 0.5rem;
         padding-right: 0;
+        backdrop-filter: blur(0.5rem);
     }
 
     .scene-settings-large-input-title {

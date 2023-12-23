@@ -91,7 +91,7 @@ export class Game {
                         }
                     });
                 }
-                Level.MIDDLE_LENGTH = this.sceneSettings.sceneLength;
+                Level.MIDDLE_LENGTH = this.sceneSettings.levelLength;
                 Ring.RADIUS = this.sceneSettings.ringRadius;
                 Game.GRAVITY = this.sceneSettings.gravity;
                 this.level = new Level(this.scene, 1, this.mode, this.sceneSettings);
@@ -302,8 +302,10 @@ export class Game {
         for (let i = 0; i < numAfter; i++) {
             this.level.createNext();
         }
-        for (let i = 0; i < -numAfter; i++) {
-            this.level.destroyFirst();
+        if (numAfter < 0) {
+            for (let i = 0; i < -numAfter; i++) {
+                this.level.destroyFirst();
+            }
         }
         if (this.player.position.x - Game.RENDER_START * Tile.LENGTH > this.level.rings[0].tiles[0].position.x) {
             this.level.destroyLast();

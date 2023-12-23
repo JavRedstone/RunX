@@ -11,9 +11,9 @@
     }
 </script>
 
-<div class="settings-wrapper">
-    <button class="settings-toggle" on:click={exitSettings} tabindex="-1">
-        <img class="settings-toggle-icon" src="UI/exit.svg" alt="Exit icon">
+<div class="credits-wrapper">
+    <button class="credits-toggle" on:click={exitSettings} tabindex="-1">
+        <img class="credits-toggle-icon" src="UI/exit.svg" alt="Exit icon">
     </button>
     <h1>Game Credits</h1>
     <p>Idea from Space Run 3 published by Unblocked Games FreezeNova</p>
@@ -34,7 +34,7 @@
 </div>
 
 <style>
-    .settings-wrapper {
+    .credits-wrapper {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -45,9 +45,10 @@
         border-radius: 0.5rem;
         text-align: center;
         padding: 1rem;
+        backdrop-filter: blur(0.5rem);
     }
 
-    .settings-toggle {
+    .credits-toggle {
         position: absolute;
         top: 0;
         right: 0;
@@ -64,7 +65,7 @@
         }
     }
 
-    .settings-toggle-icon {
+    .credits-toggle-icon {
         width: 2rem;
         height: 2rem;
     }

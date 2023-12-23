@@ -77,6 +77,7 @@
         border-radius: 0.5rem;
         text-align: center;
         padding: 1rem;
+        backdrop-filter: blur(0.5rem);
     }
 
     .settings-toggle {
