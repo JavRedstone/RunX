@@ -79,6 +79,13 @@ export class Game {
                     this.level.destroy();
                     this.player.reset();
                     this.time = 0;
+                    stats.update(value => {
+                        return {
+                            ...value,
+                            deaths: 0,
+                            level: 1
+                        }
+                    });
                 }
                 Level.MIDDLE_LENGTH = this.sceneSettings.sceneLength;
                 Ring.RADIUS = this.sceneSettings.ringRadius;
@@ -167,6 +174,13 @@ export class Game {
                     this.level.destroy();
                     this.player.reset();
                     this.time = 0;
+                    stats.update(value => {
+                        return {
+                            ...value,
+                            deaths: 0,
+                            level: 1
+                        }
+                    });
                     this.level = new Level(this.scene, 1, this.mode, this.sceneSettings);
                 }
             }
