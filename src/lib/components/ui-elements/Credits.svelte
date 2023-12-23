@@ -16,7 +16,8 @@
         <img class="credits-toggle-icon" src="UI/exit.svg" alt="Exit icon">
     </button>
     <h1>Game Credits</h1>
-    <p>Idea from Space Run 3 published by Unblocked Games FreezeNova</p>
+    <p>Created by JavRedstone</p>
+    <p>Original game idea from Space Run 3 published by Unblocked Games FreezeNova</p>
     <p>Feature ideas suggested by my friends</p>
     <h1>Music Credits</h1>
     <p>
