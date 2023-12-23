@@ -5,7 +5,8 @@
         toggles.update((value) => {
             return {
                 ...value,
-                started: true
+                started: true,
+                settings: false
             }
         });
     }

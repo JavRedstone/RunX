@@ -22,3 +22,7 @@ export const stats = writable({
     deaths: 0,
     time: 0
 });
+export const musicSettings = writable({
+    volume: 100,
+    muted: false
+});
