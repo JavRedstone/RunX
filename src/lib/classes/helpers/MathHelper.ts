@@ -70,4 +70,13 @@ export class MathHelper {
     public static dist3(p1: Vector3, p2: Vector3): number {
         return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) + Math.pow(p2.z - p1.z, 2);
     }
+
+    public static toHoursMinsSecs(ms: number): string {
+        let secs: number = Math.floor(ms / 1000);
+        let mins: number = Math.floor(secs / 60);
+        secs = secs % 60;
+        let hours: number = Math.floor(mins / 60);
+        mins = mins % 60;
+        return `${hours}h ${mins}m ${secs}s`;
+    }
 }

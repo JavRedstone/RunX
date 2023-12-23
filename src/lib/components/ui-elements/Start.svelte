@@ -1,38 +1,47 @@
 <script lang="ts">
-    import { EventName } from "$lib/classes/enums/Message";
-    import { eventName } from "$lib/stores/store";
+    import { toggles } from "$lib/stores/store";
 
     function startGame(): void {
-        eventName.set(EventName.START);
+        toggles.update((value) => {
+            return {
+                ...value,
+                started: true
+            }
+        });
     }
 
     function openSettings(): void {
-        eventName.set(EventName.TOGGLE_SETTINGS);
+        toggles.update((value) => {
+            return {
+                ...value,
+                settings: true
+            }
+        });
     }
 </script>
 
 <div class="start-wrapper">
     <h1 class="start-title">Run X</h1>
-    <button class="start-button start-start" on:click={startGame}>Start</button>
-    <button class="start-button start-settings" on:click={openSettings}>Settings</button>
+    <button class="start-button start-start" tabindex="-1" on:click={startGame}>Start</button>
+    <button class="start-button start-settings" tabindex="-1" on:click={openSettings}>Settings</button>
 </div>
 
 <style>
     .start-wrapper {
         width: 100vw;
         height: 100vh;
-        /* background: linear-gradient(45deg, #f56e53, #f5a653, #f5d453, #c5f553, #53f5a6, #53f5d4, #53a6f5, #535cf5, #a653f5, #f553f5, #f553a6, #f5535c); */
         background: linear-gradient(#f56e53, #f5ba53, #f5e553);
     }
 
     .start-title {
         position: absolute;
-        top: 5rem;
+        top: 2rem;
         left: 50%;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%);
         font-size: 5rem;
         text-shadow: 0 0 1rem #ffffff;
         user-select: none;
+        text-align: center;
     }
 
     .start-button {
@@ -42,10 +51,11 @@
         width: 20rem;
         height: 4rem;
         border: none;
-        border-radius: 0;
-        background-color: #808080;
+        border-radius: 0.5rem;
+        background-color: #f56e53;
         border: 0.2rem solid #ffffff;
         color: #ffffff;
+        text-shadow: 0 0 1rem #ffffff;
         font-family: 'Poppins', sans-serif;
         font-size: 2rem;
 

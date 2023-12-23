@@ -5,9 +5,8 @@ import { TileType } from "../enums/TileType";
 import { Pair } from "../structs/Pair";
 import { Tile } from "./Tile";
 import { Ring } from "./Ring";
-import { Color } from "../enums/Color";
-import { eventName } from "$lib/stores/store";
-import { EventName } from "../enums/Message";
+import { toggles } from "$lib/stores/store";
+import { stats } from "$lib/stores/store";
 
 export class Game {
     public static readonly TPS: number = 60;
@@ -38,30 +37,11 @@ export class Game {
     public tileActionIntervals: number[] = [];
 
     public globalTicker: number = 0;
-    public stoppedTicker: boolean = false;
+
+    public time: number = 0;
 
     public constructor(scene: Scene) {
         this.scene = scene;
-
-        this.setupEventDistributor();
-    }
-
-    public setupEventDistributor(): void {
-        eventName.subscribe(value => {
-            switch (value) {
-                case EventName.START:
-                    this.start();
-                    break;
-                case EventName.PAUSE_PLAY:
-                    if (this.stoppedTicker) {
-                        this.startTicker();
-                    }
-                    else {
-                        this.stopTicker();
-                    }
-                    break;
-            }
-        });
     }
 
     public start(): void {
@@ -69,21 +49,42 @@ export class Game {
         this.player = new Player(this.scene);
 
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        
+        this.setupToggleSubscriber();
+    }
 
-        this.startTicker();
+    public setupToggleSubscriber(): void {
+        toggles.subscribe(value => {
+            if (value.paused || value.won) {
+                this.stopTicker();
+            }
+            else {
+                this.stopTicker();
+                this.startTicker();
+            }
+        });
     }
     
     public startTicker(): void {
         this.globalTicker = setInterval(() => {
             this.update();
             this.updateRender();
+            this.updateTime();
         }, 1000 / Game.TPS);
-        this.stoppedTicker = false;
+    }
+
+    public updateTime(): void {
+        this.time += 1000 / Game.TPS;
+        stats.update(value => {
+            return {
+                ...value,
+                time: this.time
+            }
+        });
     }
 
     public stopTicker(): void {
         clearInterval(this.globalTicker);
-        this.stoppedTicker = true;
     }
 
     public update(): void {
@@ -102,7 +103,12 @@ export class Game {
 
     public handlePlayerBounds(): void {
         if (this.player.position.distanceTo(new Vector3(this.player.position.x, 0, 0)) > Ring.RADIUS * Player.MAX_FALL_MULTIPLIER) {
-            eventName.set(EventName.DEATH_INCREMENT);   
+            stats.update(value => {
+                return {
+                    ...value,
+                    deaths: value.deaths + 1
+                }
+            });
         }
         if (this.player.position.distanceTo(new Vector3(this.player.position.x, 0, 0)) > Ring.RADIUS * Player.MAX_FALL_MULTIPLIER ||
             (this.player.currTile != null && this.player.currTile.type == TileType.ENDING) ||
@@ -120,9 +126,25 @@ export class Game {
             this.scene.rotation.copy(new Euler(0, 0, 0));
         }
         if (this.player.currTile != null && this.player.currTile.type == TileType.ENDING) {
-            this.level.destroy();
-            this.level = new Level(this.scene, this.level.num + 1);
-            eventName.set(EventName.LEVEL_INCREMENT);
+            if (this.level.num < Level.MAX_LEVEL) {
+                this.level.destroy();
+                this.level = new Level(this.scene, this.level.num + 1);
+                stats.update(value => {
+                    return {
+                        ...value,
+                        level: value.level + 1
+                    }
+                });
+            }
+            else {
+                this.destroy();
+                toggles.update(value => {
+                    return {
+                        ...value,
+                        won: true
+                    }
+                });
+            }
         }
     }
 
@@ -238,7 +260,7 @@ export class Game {
     }
     
     public destroy(): void {
-        this.level.destroy();
         this.player.destroy();
+        this.level.destroy();
     }
 }

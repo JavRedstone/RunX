@@ -4,6 +4,8 @@ import { Ring } from "./Ring";
 import type { Tile } from "./Tile";
 
 export class Level {
+    public static readonly MAX_LEVEL: number = 100;
+
     public static readonly STARTING_LENGTH: number = 12;
     public static readonly ENDING_LENGTH: number = 25;
     public static readonly MIDDLE_LENGTH: number = 50;
@@ -113,6 +115,7 @@ export class Level {
     public destroy(): void {
         this.rings.forEach(ring => ring.destroy());
         this.rings = [];
+        this.generatedRings = [];
     }
 
     public destroyLast(): void {

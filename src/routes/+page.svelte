@@ -21,6 +21,7 @@
 
   * { 
     color: white;
+    text-shadow: 0 0 1rem #ffffff;
     font-family: 'Poppins', sans-serif;
   }
 

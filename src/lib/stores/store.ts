@@ -1,4 +1,13 @@
-import { EventName } from '$lib/classes/enums/Message';
 import { writable } from 'svelte/store';
 
-export const eventName = writable(EventName.NONE);
+export const toggles = writable({
+    started: false,
+    paused: false,
+    settings: false,
+    won: false,
+});
+export const stats = writable({
+    level: 1,
+    deaths: 0,
+    time: 0
+});

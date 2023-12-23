@@ -95,6 +95,7 @@
     $: if (camera && scene) updateRenderPass($camera, $size);
 
     onMount(() => {
+        
         let before: boolean = autoRender.current;
         autoRender.set(false);
         return () => {

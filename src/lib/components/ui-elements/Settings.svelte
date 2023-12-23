@@ -1,9 +1,13 @@
 <script lang="ts">
-  import { EventName } from "$lib/classes/enums/Message";
-  import { eventName } from "$lib/stores/store";
+    import { toggles } from "$lib/stores/store";
 
     function exitSettings(): void {
-        eventName.set(EventName.TOGGLE_SETTINGS);
+        toggles.update((value) => {
+            return {
+                ...value,
+                settings: false
+            }
+        });
     }
 </script>
 
@@ -24,6 +28,7 @@
         height: 30rem;
         background-color: rgba(0, 0, 0, 0.75);
         border: 0.2rem solid #ffffff;
+        border-radius: 0.5rem;
         text-align: center;
     }
 
@@ -31,8 +36,12 @@
         position: absolute;
         top: 0;
         right: 0;
+        width: 3rem;
+        height: 3rem;
         outline: none;
         border: none;
+        border-bottom-left-radius: 0.5rem;
+        border-top-right-radius: 0.25rem;
         background-color: #f56e53;
 
         &:hover {
