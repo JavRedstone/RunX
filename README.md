@@ -1,8 +1,12 @@
 # RunX
 
 A better variation of Run3
+- 6 Tile types
+- Smooth gameplay
+- 3D graphics
+- Three JS
 
-# Music
+# Music Credits
 
 Ghostrifter Official - Neon Drive" is under a Creative Commons (CC BY-ND 3.0) license.
 https://creativecommons.org/licenses/by-nd/3.0/

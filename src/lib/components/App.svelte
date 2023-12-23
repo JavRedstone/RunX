@@ -11,6 +11,7 @@
 
   import NoCopyrightMusic from '$lib/music/NoCopyrightMusic.mp3';
   import { onMount } from 'svelte';
+  import Credits from './ui-elements/Credits.svelte';
 
   let audio: HTMLAudioElement;
   onMount(() => {
@@ -44,6 +45,9 @@
 
   {#if $toggles.settings}
     <Settings />
+  {/if}
+  {#if $toggles.credits}
+    <Credits />
   {/if}
 {:else}
   <YouWon />

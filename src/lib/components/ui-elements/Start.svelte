@@ -6,7 +6,8 @@
             return {
                 ...value,
                 started: true,
-                settings: false
+                settings: false,
+                credits: false
             }
         });
     }
@@ -28,6 +29,15 @@
             }
         });
     }
+
+    function openCredits(): void {
+        toggles.update((value) => {
+            return {
+                ...value,
+                credits: true
+            }
+        });
+    }
 </script>
 
 <div class="start-wrapper">
@@ -42,6 +52,7 @@
         {/if}
     </button>
     <button class="start-button start-settings" tabindex="-1" on:click={openSettings}>Settings</button>
+    <button class="start-button start-credits" tabindex="-1" on:click={openCredits}>Credits</button>
 </div>
 
 <style>
@@ -107,6 +118,10 @@
 
     .start-settings {
         top: calc(26rem);
+    }
+
+    .start-credits {
+        top: calc(32rem);
     }
 </style>
 

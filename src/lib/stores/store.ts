@@ -7,6 +7,7 @@ export const toggles = writable({
     mode: "speedrun",
     paused: false,
     settings: false,
+    credits: false,
     won: false,
 });
 export const sceneSettings = writable({
