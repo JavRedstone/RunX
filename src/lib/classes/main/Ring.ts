@@ -7,7 +7,7 @@ import { Tile } from "./Tile";
 import { Level } from "./Level";
 
 export class Ring {
-    public static readonly RADIUS: number = 2;
+    public static RADIUS: number = 2;
 
     public tiles: Tile[] = [];
 
@@ -15,14 +15,20 @@ export class Ring {
     public level: number;
     public sides: number;
 
+    public mode: string = "speedrun";
+    public sceneSettings: any;
+
     public scene: Scene;
 
-    public constructor(scene: Scene, num: number, level: number, sides: number) {
+    public constructor(scene: Scene, num: number, level: number, sides: number, mode: string, sceneSettings: any) {
         this.scene = scene;
 
         this.num = num;
         this.level = level;
         this.sides = sides;
+
+        this.mode = mode;
+        this.sceneSettings = sceneSettings;
 
         this.create();
     }
@@ -62,8 +68,16 @@ export class Ring {
     }
 
     public create(): void {
-        let tileDistrib: NumDistrib = TileDistrib.getTileDistrib(this.level, this.sides);
-        let tilePreference: number[] = TileDistrib.getTilePreference(this.level);
+        let tileDistrib: NumDistrib;
+        let tilePreference: number[];
+        if (this.mode == "speedrun") {
+            tileDistrib = TileDistrib.getTileDistrib(this.level, this.sides);
+            tilePreference = TileDistrib.getTilePreference(this.level);
+        }
+        else {
+            tileDistrib = this.sceneSettings.tileDistribution;
+            tilePreference = this.sceneSettings.tilePreference;
+        }
         tileDistrib.randDistribBias(MathHelper.percCumSum(tilePreference));
         let width: number = 2 * Ring.RADIUS * Math.tan(Math.PI / this.sides) - Tile.HEIGHT * Math.tan(Math.PI / this.sides);
         for (let i = 0; i < this.sides; i++) {

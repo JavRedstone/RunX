@@ -4,7 +4,7 @@ import { TileType } from "./TileType";
 export class TileDistrib {
     public static readonly DISTRIB_1: NumDistrib = new NumDistrib(1, TileType.NORMAL + 1);
     public static readonly DISTRIB_2: NumDistrib = new NumDistrib(1, TileType.FALLING + 1);
-    public static readonly DISTRIB_3: NumDistrib = new NumDistrib(1, TileType.JUMPING + 1);
+    public static readonly DISTRIB_3: NumDistrib = new NumDistrib(1, TileType.JUMP + 1);
     public static readonly DISTRIB_4: NumDistrib = new NumDistrib(1, TileType.BOMB + 1);
     public static readonly DISTRIB_5: NumDistrib = new NumDistrib(1, TileType.BOMB + 1);
     public static readonly DISTRIB_6: NumDistrib = new NumDistrib(1, TileType.BOOST + 1);

@@ -8,7 +8,7 @@ export class Level {
 
     public static readonly STARTING_LENGTH: number = 12;
     public static readonly ENDING_LENGTH: number = 25;
-    public static readonly MIDDLE_LENGTH: number = 50;
+    public static MIDDLE_LENGTH: number = 50;
 
     public static readonly MIN_SIDES: number = 4;
     public static readonly MAX_SIDES: number = 8;
@@ -20,13 +20,23 @@ export class Level {
     public rings: Ring[] = [];
     public generatedRings: Ring[] = [];
 
+    public mode: string = "speedrun";
+    public sceneSettings: any;
+
     public scene: Scene;
 
-    public constructor(scene: Scene, num: number) {
+    public constructor(scene: Scene, num: number, mode: string, sceneSettings: any) {
         this.scene = scene;
         this.num = num;
+        this.mode = mode;
+        this.sceneSettings = sceneSettings;
         
-        this.sides = MathHelper.randIntRange(Level.MIN_SIDES, Level.MAX_SIDES);
+        if (mode === "speedrun") {
+            this.sides = MathHelper.randIntRange(Level.MIN_SIDES, Level.MAX_SIDES);
+        }
+        else {
+            this.sides = sceneSettings.numSides;
+        }
     }
 
     public getFrontBackTiles(tile: Tile): Tile[] {
@@ -99,7 +109,7 @@ export class Level {
                 this.rings.push(generatedRing);
             }
             else {
-                let ring: Ring = new Ring(this.scene, this.numRingsCreated, this.num, this.sides);
+                let ring: Ring = new Ring(this.scene, this.numRingsCreated, this.num, this.sides, this.mode, this.sceneSettings);
                 this.rings.push(ring);
                 this.generatedRings.push(ring);
             }

@@ -47,7 +47,6 @@
         transform: translate(-50%, -50%);
         width: 20rem;
         height: 4rem;
-        border: none;
         border-radius: 0.5rem;
         background-color: #f56e53;
         border: 0.2rem solid #ffffff;

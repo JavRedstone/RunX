@@ -7,6 +7,7 @@
   import YouWon from './ui-elements/YouWon.svelte';
   
   import { toggles } from '$lib/stores/store';
+  import TilePreferenceChooser from './ui-elements/SceneSettings.svelte';
 </script>
 
 {#if !$toggles.won}
@@ -17,6 +18,10 @@
     <Canvas>
       <Scene />
     </Canvas>
+
+    {#if $toggles.mode === 'creative'}
+      <TilePreferenceChooser />
+    {/if}
   {/if}
 
   {#if $toggles.settings}

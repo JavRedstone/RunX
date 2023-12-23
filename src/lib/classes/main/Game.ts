@@ -5,13 +5,13 @@ import { TileType } from "../enums/TileType";
 import { Pair } from "../structs/Pair";
 import { Tile } from "./Tile";
 import { Ring } from "./Ring";
-import { toggles } from "$lib/stores/store";
+import { sceneSettings, toggles } from "$lib/stores/store";
 import { stats } from "$lib/stores/store";
 
 export class Game {
     public static readonly TPS: number = 60;
 
-    public static readonly GRAVITY: number = 0.005;
+    public static GRAVITY: number = 0.005;
 
     public static readonly RENDER_START: number = 3;
     public static readonly RENDER_END: number = 12;
@@ -40,20 +40,24 @@ export class Game {
 
     public time: number = 0;
 
+    public mode: string = "speedrun";
+    public sceneSettings: any;
+
     public constructor(scene: Scene) {
         this.scene = scene;
     }
 
     public start(): void {
-        this.level = new Level(this.scene, 1);
+        this.setupStoreSubscriber();
+        if (this.mode === "speedrun") {
+            this.level = new Level(this.scene, 1, this.mode, this.sceneSettings);
+        }
         this.player = new Player(this.scene);
 
         this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        
-        this.setupToggleSubscriber();
     }
 
-    public setupToggleSubscriber(): void {
+    public setupStoreSubscriber(): void {
         toggles.subscribe(value => {
             if (value.paused || value.won) {
                 this.stopTicker();
@@ -61,6 +65,28 @@ export class Game {
             else {
                 this.stopTicker();
                 this.startTicker();
+            }
+
+            if (value.mode) {
+                this.mode = value.mode;
+            }
+        });
+
+        sceneSettings.subscribe(value => {
+            if (this.mode === "creative") {
+                this.sceneSettings = value;
+                if (this.level != null) {
+                    this.level.destroy();
+                    this.player.reset();
+                    this.time = 0;
+                }
+                Level.MIDDLE_LENGTH = this.sceneSettings.sceneLength;
+                Ring.RADIUS = this.sceneSettings.ringRadius;
+                Game.GRAVITY = this.sceneSettings.gravity;
+                this.level = new Level(this.scene, 1, this.mode, this.sceneSettings);
+            }
+            else {
+                this.sceneSettings = value;
             }
         });
     }
@@ -127,14 +153,22 @@ export class Game {
         }
         if (this.player.currTile != null && this.player.currTile.type == TileType.ENDING) {
             if (this.level.num < Level.MAX_LEVEL) {
-                this.level.destroy();
-                this.level = new Level(this.scene, this.level.num + 1);
-                stats.update(value => {
-                    return {
-                        ...value,
-                        level: value.level + 1
-                    }
-                });
+                if (this.mode === "speedrun") {
+                    this.level.destroy();
+                    this.level = new Level(this.scene, this.level.num + 1, this.mode, this.sceneSettings);
+                    stats.update(value => {
+                        return {
+                            ...value,
+                            level: value.level + 1
+                        }
+                    });
+                }
+                else {
+                    this.level.destroy();
+                    this.player.reset();
+                    this.time = 0;
+                    this.level = new Level(this.scene, 1, this.mode, this.sceneSettings);
+                }
             }
             else {
                 this.destroy();

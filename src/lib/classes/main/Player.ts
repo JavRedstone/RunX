@@ -142,7 +142,7 @@ export class Player {
     public updTileEffects(): void {
         if (this.currTile != null && this.justHitTile) {
             switch(this.currTile.type) {
-                case TileType.JUMPING:
+                case TileType.JUMP:
                     this.justJumped = true;
                     this.isInAir = true;
                     this.velocity.y = 0;

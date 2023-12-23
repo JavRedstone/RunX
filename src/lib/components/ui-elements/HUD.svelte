@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import { toggles } from "$lib/stores/store";
     import { stats } from "$lib/stores/store";
-  import { MathHelper } from "$lib/classes/helpers/MathHelper";
+    import { MathHelper } from "$lib/classes/helpers/MathHelper";
 
     function pausePlay(): void {
         toggles.update((value) => {
@@ -68,7 +68,6 @@
         transform: translate(-50%);
         width: 20rem;
         height: 4rem;
-        border: none;
         border-radius: 0.5rem;
         background-color: #f56e53;
         border: 0.2rem solid #ffffff;
