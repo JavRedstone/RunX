@@ -51,6 +51,7 @@
     <input class="scene-settings-input scene-settings-large-input" tabindex="-1" placeholder="Radius of ring" type="number" bind:value={ringRadius}>
     <p class="scene-settings-large-input-title">Gravity</p>
     <input class="scene-settings-input scene-settings-large-input" tabindex="-1" placeholder="Tile length" type="number" bind:value={gravity}>
+    <p class="scene-settings-large-input-title">Tile preference</p>
     <table class="scene-settings-table">
         {#each Object.keys(tP) as tile}
             <tr>
@@ -110,10 +111,6 @@
 
     .scene-settings-large-input {
         width: calc(100% - 1rem);
-    }
-
-    .scene-settings-table {
-        margin-top: 0.5rem;
     }
 
     .scene-settings-table td {
