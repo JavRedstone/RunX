@@ -2,7 +2,7 @@
     import { Color } from '$lib/classes/enums/Color';
     import { Game } from '$lib/classes/main/Game';
     import { Tile } from '$lib/classes/main/Tile';
-  import { gameSettings } from '$lib/stores/store';
+    import { gameSettings } from '$lib/stores/store';
     import { T, useThrelte, type ThrelteContext, useTask, type Size } from '@threlte/core';
     import { OrbitControls } from '@threlte/extras';
     import { BlendFunction, BloomEffect, EffectComposer, EffectPass, KernelSize, RenderPass } from 'postprocessing';
@@ -100,7 +100,6 @@
     });
 
     onMount(() => {
-        
         let before: boolean = autoRender.current;
         autoRender.set(false);
         return () => {
