@@ -4,7 +4,7 @@
 </script>
 
 <div class="you-won-wrapper">
-    <h1 class="you-won-title">Congradulations!</h1>
+    <h1 class="you-won-title">Congratulations!</h1>
     <h2 class="you-won-subtitle">You Beat RunX!</h2>
     <p class="you-won-stats you-won-stats-level">Level: {$stats.level}</p>
     <p class="you-won-stats you-won-stats-deaths">Deaths: {$stats.deaths}</p>

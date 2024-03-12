@@ -9,7 +9,7 @@ export class Tile {
     public static readonly JUMPING_BOOST_SPEED: number = 0.2;
     public static readonly FORWARD_BOOST_SPEED: number = 0.05;
 
-    public static readonly FALL_ACCELERATION: number = 0.003;
+    public static readonly FALL_ACCELERATION: number = 0.002;
     public static readonly MAX_FALL_MULTIPLIER: number = 3;
 
     public static readonly SHRINK_RATE: number = 0.01;
