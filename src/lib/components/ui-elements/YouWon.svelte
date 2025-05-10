@@ -1,6 +1,24 @@
 <script lang="ts">
   import { MathHelper } from "$lib/classes/helpers/MathHelper";
-    import { stats } from "$lib/stores/store";
+  import { stats } from "$lib/stores/store";
+  import confetti from "canvas-confetti";
+  import { onMount, onDestroy } from "svelte";
+
+  let confettiInterval: ReturnType<typeof setInterval>;
+
+  onMount(() => {
+    confettiInterval = setInterval(() => {
+      confetti({
+        particleCount: 100,
+        spread: 60,
+        origin: { y: 0.6 },
+      });
+    }, 1000);
+  });
+
+  onDestroy(() => {
+    clearInterval(confettiInterval);
+  });
 </script>
 
 <div class="you-won-wrapper">
@@ -17,13 +35,23 @@
         width: 100vw;
         height: 100vh;
         background: linear-gradient(45deg, #f56e53, #f5a653, #f5d453, #c5f553, #53f5a6, #53f5d4, #53a6f5, #535cf5, #a653f5, #f553f5, #f553a6, #f5535c);
+        background-size: 300% 300%;
+        animation: gradientAnimation 6s ease infinite;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;        
+    }
+
+    @keyframes gradientAnimation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
 
     .you-won-title {
         position: absolute;
         top: 2rem;
-        left: 50%;
-        transform: translate(-50%);
         font-size: 3rem;
         text-shadow: 0 0 1rem #ffffff;
         user-select: none;
@@ -33,8 +61,6 @@
     .you-won-subtitle {
         position: absolute;
         top: 7rem;
-        left: 50%;
-        transform: translate(-50%);
         font-size: 2rem;
         text-shadow: 0 0 1rem #ffffff;
         user-select: none;
@@ -42,25 +68,33 @@
     }
 
     .you-won-button {
-        position: absolute;
-        left: 50%;
-        transform: translate(-50%, -50%);
         width: 20rem;
         height: 4rem;
         border-radius: 0.5rem;
         background-color: #f56e53;
         border: 0.2rem solid #ffffff;
         color: #ffffff;
+        text-shadow: 0 0 1rem #ffffff;
         font-family: 'Poppins', sans-serif;
         font-size: 2rem;
+        margin: 0;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+    }
 
-        transition: 0.25s;
+    .you-won-button:hover {
+        cursor: pointer;
+        background: linear-gradient(90deg, #f56e53, #5399f5, #ed53f5);
+        background-size: 200% 200%;
+        animation: hoverGradient 1.5s ease infinite;
+        transform: scale(1.05);
+        box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.3);
+    }
 
-        &:hover {
-            cursor: pointer;
-
-            background-color: #5399f5;
-        }
+    @keyframes hoverGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
 
     .you-won-restart {
@@ -69,8 +103,6 @@
 
     .you-won-stats {
         position: absolute;
-        left: 50%;
-        transform: translate(-50%);
         width: 12rem;
         padding-top: 0.25rem;
         padding-bottom: 0.25rem;

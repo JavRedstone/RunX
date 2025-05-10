@@ -59,24 +59,38 @@
     .start-wrapper {
         width: 100vw;
         height: 100vh;
-        background: linear-gradient(#f56e53, #f5ba53, #f5e553);
+        background: linear-gradient(45deg, #f56e53, #f5ba53, #f5e553);
+        background-size: 300% 300%;
+        animation: gradientAnimation 6s ease infinite;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @keyframes gradientAnimation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
 
     .start-title {
-        position: absolute;
-        top: 2rem;
-        left: 50%;
-        transform: translate(-50%);
         font-size: 5rem;
         text-shadow: 0 0 1rem #ffffff;
         user-select: none;
         text-align: center;
+        font-family: 'Poppins', sans-serif;
+        color: #ffffff;
+        margin-bottom: 2rem;
+        animation: fadeIn 1.5s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .start-button {
-        position: absolute;
-        left: 50%;
-        transform: translate(-50%, -50%);
         width: 20rem;
         height: 4rem;
         border-radius: 0.5rem;
@@ -86,42 +100,51 @@
         text-shadow: 0 0 1rem #ffffff;
         font-family: 'Poppins', sans-serif;
         font-size: 2rem;
+        margin: 0;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+    }
 
-        transition: 0.25s;
+    .start-button:hover {
+        cursor: pointer;
+        background: linear-gradient(90deg, #f56e53, #5399f5, #ed53f5);
+        background-size: 200% 200%;
+        animation: hoverGradient 1.5s ease infinite;
+        transform: scale(1.05);
+        box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.3);
+    }
 
-        &:hover {
-            cursor: pointer;
-
-            background-color: #5399f5;
-        }
+    @keyframes hoverGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
 
     .start-start {
-        top: calc(16rem);
         border-bottom: 0.1rem dashed #ffffff;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
     }
 
     .start-mode {
-        top: calc(20rem);
+        background-color: #5399f5;
         border-top: 0.1rem dashed #ffffff;
         border-top-left-radius: 0;
         border-top-right-radius: 0;
+    }
 
-        background-color: #5399f5;
-
-        &:hover {
-            background-color: #ed53f5;
-        }
+    .start-mode:hover {
+        background: linear-gradient(90deg, #5399f5, #ed53f5, #f56e53);
+        background-size: 200% 200%;
+        animation: hoverGradient 1.5s ease infinite;
     }
 
     .start-settings {
-        top: calc(26rem);
+        margin-top: 1rem;
     }
 
     .start-credits {
-        top: calc(32rem);
+        margin-top: 1rem;
     }
 </style>
 

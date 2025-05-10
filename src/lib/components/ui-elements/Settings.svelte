@@ -52,7 +52,7 @@
     <p class="settings-slider-value">Render distance (tiles): {renderDistance}</p>
     <h1>Music Settings</h1>
     <button class="settings-toggle" on:click={exitSettings} tabindex="-1">
-        <img class="settings-toggle-icon" src="UI/exit.svg" alt="Exit icon">
+        <span class="material-icons">close</span>
     </button>
     <button class="settings-button" on:click={toggleMusic}>
         {#if $musicSettings.muted}
@@ -72,54 +72,71 @@
         left: 50%;
         transform: translate(-50%, -50%);
         width: 30rem;
-        background-color: rgba(0, 0, 0, 0.75);
+        background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
         border: 0.2rem solid #ffffff;
         border-radius: 0.5rem;
         text-align: center;
         padding: 1rem;
-        backdrop-filter: blur(0.5rem);
+        box-shadow: 0 0 2rem rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translate(-50%, -60%); }
+        to { opacity: 1; transform: translate(-50%, -50%); }
     }
 
     .settings-toggle {
         position: absolute;
-        top: 0;
-        right: 0;
+        top: 0.5rem;
+        right: 0.5rem;
         width: 3rem;
         height: 3rem;
         outline: none;
         border: none;
-        border-bottom-left-radius: 0.5rem;
-        border-top-right-radius: 0.25rem;
-        background-color: #f56e53;
-
-        &:hover {
-            cursor: pointer;
-        }
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        transition: transform 0.3s ease, background-color 0.3s ease;
     }
 
-    .settings-toggle-icon {
-        width: 2rem;
-        height: 2rem;
+    .settings-toggle:hover {
+        cursor: pointer;
+        transform: scale(1.1);
+        background-color: rgba(255, 255, 255, 0.2);
     }
 
     .settings-button {
         width: 20rem;
         height: 4rem;
         border-radius: 0.5rem;
-        background-color: #f56e53;
+        background: linear-gradient(45deg, #f56e53, #f5ba53);
         border: 0.2rem solid #ffffff;
         color: #ffffff;
         text-shadow: 0 0 1rem #ffffff;
         font-family: 'Poppins', sans-serif;
         font-size: 2rem;
+        margin-top: 1rem;
+        transition: transform 0.3s ease, background 0.3s ease;
+    }
 
-        transition: 0.25s;
+    .settings-button:hover {
+        cursor: pointer;
+        background: linear-gradient(90deg, #f56e53, #5399f5, #ed53f5);
+        background-size: 200% 200%;
+        animation: hoverGradient 1.5s ease infinite;
+        transform: scale(1.05);
+        box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.3);
+    }
 
-        &:hover {
-            cursor: pointer;
-
-            background-color: #5399f5;
-        }
+    @keyframes hoverGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
 
     .settings-slider {
@@ -153,5 +170,7 @@
     .settings-slider-value {
         margin: 0;
         font-size: 1.5rem;
+        color: white;
+        text-shadow: 0 0 1rem black;
     }
 </style>

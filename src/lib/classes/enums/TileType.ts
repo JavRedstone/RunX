@@ -29,7 +29,7 @@ export class TileType {
             case TileType.STARTING:
                 return Color.BLUE;
             case TileType.ENDING:
-                return Color.BLUE;
+                return Color.ORANGE;
             default:
             case TileType.EMPTY:
                 return '';

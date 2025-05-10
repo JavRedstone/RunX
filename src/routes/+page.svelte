@@ -1,5 +1,6 @@
 <script lang="ts">
   import App from '$lib/components/App.svelte';
+  import { appBackgroundColor } from '$lib/stores/store';
 </script>
 
 <svelte:head>
@@ -7,7 +8,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </svelte:head>
 
-<div class="app">
+<div class="app" style="background-color: {$appBackgroundColor}; transition: background-color 0.5s ease-in-out;">
   <App />
 </div>
 
@@ -28,6 +29,5 @@
   .app {
     width: 100vw;
     height: 100vh;
-    background-color: #000000;
   }
 </style>

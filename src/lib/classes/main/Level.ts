@@ -6,12 +6,12 @@ import type { Tile } from "./Tile";
 export class Level {
     public static readonly MAX_LEVEL: number = 100;
 
-    public static readonly STARTING_LENGTH: number = 12;
+    public static readonly STARTING_LENGTH: number = 10;
     public static readonly ENDING_LENGTH: number = 25;
     public static MIDDLE_LENGTH: number = 50;
 
     public static readonly MIN_SIDES: number = 4;
-    public static readonly MAX_SIDES: number = 8;
+    public static readonly MAX_SIDES: number = 10;
 
     public num: number;
     public sides: number;

@@ -30,3 +30,4 @@ export const musicSettings = writable({
     volume: 100,
     muted: false
 });
+export const appBackgroundColor = writable('#000000');

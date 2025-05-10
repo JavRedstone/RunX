@@ -9,6 +9,8 @@ import { gameSettings, sceneSettings, toggles } from "$lib/stores/store";
 import { stats } from "$lib/stores/store";
 
 export class Game {
+    public static readonly RESET_TIME: number = 500;
+
     public static readonly TPS: number = 60;
 
     public static GRAVITY: number = 0.005;
@@ -42,6 +44,8 @@ export class Game {
 
     public mode: string = "speedrun";
     public sceneSettings: any;
+
+    public is_resetting: boolean = false;
 
     public constructor(scene: Scene) {
         this.scene = scene;
@@ -147,56 +151,56 @@ export class Game {
                 }
             });
         }
-        if (this.player.position.distanceTo(new Vector3(this.player.position.x, 0, 0)) > Ring.RADIUS * Player.MAX_FALL_MULTIPLIER ||
-            (this.player.currTile != null && this.player.currTile.type == TileType.ENDING) ||
+        if (!this.is_resetting && this.player.position.distanceTo(new Vector3(this.player.position.x, 0, 0)) > Ring.RADIUS * Player.MAX_FALL_MULTIPLIER ||
             this.player.pressedReset
         ) {
-            this.level.reset();
-            this.tileActionIntervals.forEach(interval => clearInterval(interval));
-            this.tileActionIntervals = [];
-
-            this.player.reset();
-
-            this.cameraTargetPosition = new Vector3(0, 0, 0);
-            this.cameraTargetRotation = new Euler(0, 0, 0);
-            this.camera.position.copy(this.cameraTargetPosition);
-            this.scene.rotation.copy(new Euler(0, 0, 0));
+            this.resetGame();
         }
-        if (this.player.currTile != null && this.player.currTile.type == TileType.ENDING) {
-            if (this.level.num < Level.MAX_LEVEL) {
-                if (this.mode === "speedrun") {
-                    this.level.destroy();
-                    this.level = new Level(this.scene, this.level.num + 1, this.mode, this.sceneSettings);
-                    stats.update(value => {
-                        return {
-                            ...value,
-                            level: value.level + 1
-                        }
-                    });
+        if (!this.is_resetting && this.player.currTile != null && this.player.currTile.type == TileType.ENDING) {
+            this.is_resetting = true;
+            this.player.acceleration.set(2, 0, 0);
+            setTimeout(() => {
+                this.resetGame();
+
+                if (this.level.num < Level.MAX_LEVEL) {
+                    if (this.mode === "speedrun") {
+                        this.level.destroy();
+                        this.level = new Level(this.scene, this.level.num + 1, this.mode, this.sceneSettings);
+                        stats.update(value => {
+                            return {
+                                ...value,
+                                level: value.level + 1
+                            }
+                        });
+                    }
+                    else {
+                        this.level.destroy();
+                        this.player.reset();
+                        this.time = 0;
+                        stats.update(value => {
+                            return {
+                                ...value,
+                                deaths: 0,
+                                level: 1
+                            }
+                        });
+                        this.level = new Level(this.scene, 1, this.mode, this.sceneSettings);
+                    }
                 }
                 else {
-                    this.level.destroy();
-                    this.player.reset();
-                    this.time = 0;
-                    stats.update(value => {
+                    this.destroy();
+                    toggles.update(value => {
                         return {
                             ...value,
-                            deaths: 0,
-                            level: 1
+                            won: true
                         }
                     });
-                    this.level = new Level(this.scene, 1, this.mode, this.sceneSettings);
                 }
-            }
-            else {
-                this.destroy();
-                toggles.update(value => {
-                    return {
-                        ...value,
-                        won: true
-                    }
-                });
-            }
+
+                setTimeout(() => {
+                    this.is_resetting = false;
+                }, Game.RESET_TIME / 2);
+            }, Game.RESET_TIME);
         }
     }
 
@@ -314,6 +318,19 @@ export class Game {
 
     public updateRender(): void {
         this.level.updateRender();
+    }
+
+    public resetGame(): void {
+        this.level.reset();
+        this.tileActionIntervals.forEach(interval => clearInterval(interval));
+        this.tileActionIntervals = [];
+
+        this.player.reset();
+
+        this.cameraTargetPosition = new Vector3(0, 0, 0);
+        this.cameraTargetRotation = new Euler(0, 0, 0);
+        this.camera.position.copy(this.cameraTargetPosition);
+        this.scene.rotation.copy(new Euler(0, 0, 0));
     }
     
     public destroy(): void {

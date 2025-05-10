@@ -1,8 +1,9 @@
 <script lang="ts">
     import { Color } from '$lib/classes/enums/Color';
+  import { TileType } from '$lib/classes/enums/TileType';
     import { Game } from '$lib/classes/main/Game';
     import { Tile } from '$lib/classes/main/Tile';
-    import { gameSettings } from '$lib/stores/store';
+    import { gameSettings, appBackgroundColor } from '$lib/stores/store';
     import { T, useThrelte, type ThrelteContext, useTask, type Size } from '@threlte/core';
     import { OrbitControls } from '@threlte/extras';
     import { BlendFunction, BloomEffect, EffectComposer, EffectPass, KernelSize, RenderPass } from 'postprocessing';
@@ -93,6 +94,16 @@
         });
     }
 
+    function checkPlayerTile(): void {
+        if (game.player.currTile?.type === TileType.ENDING) {
+            appBackgroundColor.set(Color.ORANGE);
+            scene.fog.color.set(Color.ORANGE);
+        } else {
+            appBackgroundColor.set(Color.BLACK);
+            scene.fog.color.set(Color.BLACK);
+        }
+    }
+
     $: if (camera && scene) updateRenderPass($camera, $size);
 
     gameSettings.subscribe((value) => {
@@ -106,7 +117,14 @@
             autoRender.set(before);
         }
     });
+
+    useTask(() => {
+        checkPlayerTile();
+    }, { stage: renderStage });
     
+    $: if (game.player) {
+        checkPlayerTile();
+    }
 </script>
 
 <T.PerspectiveCamera
